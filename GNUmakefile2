@@ -1,0 +1,47 @@
+
+#############################################################################
+## Variables
+#############################################################################
+
+SHELL = /bin/bash
+BUILD_REL_DIR = build.gmake
+
+HDRS = $(wildcard $(MAIN_DIR)/src/util/*.h)
+LIBS = $(MAIN_DIR)/$(BUILD_REL_DIR)/libutil.so
+SRCS = $(wildcard *.cpp)
+PRGS = $(patsubst %.cpp, %.exe, $(SRCS))
+
+CXX = g++
+CPPFLAGS = -I${MAIN_DIR}/src
+CXXFLAGS = -std=c++20 -fcheck-new -Wall -Wextra -Wfloat-equal
+LDFLAGS = -L${MAIN_DIR}/$(BUILD_REL_DIR) -lpthread
+
+
+#############################################################################
+## General targets
+#############################################################################
+
+all: $(PRGS)
+
+verbose:
+	@echo "HDRS:" $(HDRS)
+	@echo "LIBS:" $(LIBS)
+	@echo "SRCS:" $(SRCS)
+	@echo "PRGS:" $(PRGS)
+
+clean:
+	rm -f $(PRGS)
+
+
+#############################################################################
+## Unit tests
+#############################################################################
+
+fichier_pdf.exe: fichier_pdf.cpp $(MAIN_DIR)/$(BUILD_REL_DIR)/fichier_pdf.o  $(HDRS) $(LIBS)
+	@rm -f $@
+	$(LINK.cc) -o $@ fichier_pdf.cpp $(MAIN_DIR)/$(BUILD_REL_DIR)/fichier_pdf.o -lutil -lhpdf -lz
+
+%.exe: %.cpp $(HDRS) $(LIBS)
+	@rm -f $@
+	$(LINK.cc) -o $@ $< -lutil
+

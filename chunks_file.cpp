@@ -5,26 +5,26 @@
 #include <vector>
 #include <iostream>
 
-struct Section
+struct Chunk
  {
-  std::string nom ;
-  std::string variante ;
+  std::string name ;
+  std::string flavor ;
   std::string version ;
-  std::vector<std::string> colonnes ;
-  std::vector<std::size_t> largeurs ;
-  std::vector<std::vector<std::string>> contenu ;
+  std::vector<std::string> columns ;
+  std::vector<std::size_t> widths ;
+  std::vector<std::vector<std::string>> content ;
  } ;
 
-void lecture
+void reading
  ( const std::string & chemin,
-   std::vector<Section> & sections,
+   std::vector<Chunk> & sections,
    ChunksFile & finput
  )
  {
   if (!(finput.open(chemin)))
    {
     std::ostringstream oss ;
-    oss<<"echec à l'ouverture en lecture du fichier : "<<chemin<<std::endl ;
+    oss<<"echec à l'ouverture en reading du fichier : "<<chemin<<std::endl ;
     throw std::runtime_error(oss.str()) ;
    }
 
@@ -32,13 +32,13 @@ void lecture
    {
     if ((finput.chunk_name()!="CANDIDATS")||(finput.chunk_version()!="v5"))
      { continue ; }
-    Section section ;
-    section.nom = finput.chunk_name() ;
-    section.variante = finput.chunk_flavor() ;
-    section.version = finput.chunk_version() ;
-    section.colonnes = finput.chunk_columns() ;
-    for ( auto colonne : section.colonnes )
-      section.largeurs.push_back(colonne.size()) ;
+    Chunk chunk ;
+    chunk.name = finput.chunk_name() ;
+    chunk.flavor = finput.chunk_flavor() ;
+    chunk.version = finput.chunk_version() ;
+    chunk.columns = finput.chunk_columns() ;
+    for ( auto colonne : chunk.columns )
+      chunk.widths.push_back(colonne.size()) ;
     while (finput.read_next_line())
      {
       std::vector<std::string> ligne ;
@@ -48,39 +48,39 @@ void lecture
        {
         std::cout<<mot<<" " ;
         ligne.push_back(mot) ;
-        if ((colonne<section.largeurs.size())&&(mot.size()>section.largeurs[colonne]))
-         { section.largeurs[colonne] = mot.size() ; }
+        if ((colonne<chunk.widths.size())&&(mot.size()>chunk.widths[colonne]))
+         { chunk.widths[colonne] = mot.size() ; }
         colonne++ ;
        }
       std::cout<<std::endl ;
-      section.contenu.push_back(ligne) ;
+      chunk.content.push_back(ligne) ;
      }
-    sections.push_back(section) ;
+    sections.push_back(chunk) ;
    }
  }
 
-void ecriture
+void writing
  ( const std::string & chemin,
-   const std::vector<Section> & sections,
+   const std::vector<Chunk> & sections,
    ChunksFile & foutput  
  )
  {
   if (!(foutput.open(chemin,"WRITE")))
    {
     std::ostringstream oss ;
-    oss<<"echec à l'ouverture en ecriture du fichier : "<<chemin<<std::endl ;
+    oss<<"echec à l'ouverture en writing du fichier : "<<chemin<<std::endl ;
     throw std::runtime_error(oss.str()) ;
    }
   
-  for ( auto section : sections )
+  for ( auto chunk : sections )
    {
-    foutput.chunk_name(section.nom) ;
-    foutput.chunk_flavor(section.variante) ;
-    foutput.chunk_version(section.version) ;
-    foutput.chunk_columns(section.colonnes) ;
-    foutput.change_format(section.largeurs) ;
+    foutput.chunk_name(chunk.name) ;
+    foutput.chunk_flavor(chunk.flavor) ;
+    foutput.chunk_version(chunk.version) ;
+    foutput.chunk_columns(chunk.columns) ;
+    foutput.change_format(chunk.widths) ;
     foutput.chunk_write() ;
-    for ( auto ligne : section.contenu )
+    for ( auto ligne : chunk.content )
      {
       for ( auto mot : ligne )
         { foutput<<mot ; }
@@ -127,36 +127,36 @@ int main()
  {
   // reading a name/value list
   std::string element ;
-  ChunksFile ft(true) ;
-  ft.open("chunks_file.in.csv") ; ft.read_next_line() ; element = "" ; ft>>element ; std::cout<<"Premier element : "<<element<<std::endl ;
-  ft.open("chunks_file.in.csv") ; ft.read_next_line() ; element = "" ; ft>>element ; std::cout<<"Premier element : "<<element<<std::endl ;
+  ChunksFile cf(true) ;
+  cf.open("chunks_file.in.csv") ; cf.read_next_line() ; element = "" ; cf>>element ; std::cout<<"First element : "<<element<<std::endl ;
+  cf.open("chunks_file.in.csv") ; cf.read_next_line() ; element = "" ; cf>>element ; std::cout<<"First element : "<<element<<std::endl ;
 
   // reading csv chunks
-  std::vector<Section> sections1, sections2 ;
+  std::vector<Chunk> sections1, sections2 ;
 
-  lecture("chunks_file.in.csv",sections1,ft) ;
-  ecriture("chunks_file.out.csv",sections1,ft) ;
-  lecture("chunks_file.out.csv",sections2,ft) ;
+  reading("chunks_file.in.csv",sections1,cf) ;
+  writing("chunks_file.out.csv",sections1,cf) ;
+  reading("chunks_file.out.csv",sections2,cf) ;
 
   if (sections1.size()!=sections2.size())
-   { throw std::runtime_error("Probleme de nombre de sections") ; }
+   { throw std::runtime_error("Inconsistent number of chunks") ; }
 
-  std::vector<Section>::const_iterator itr1, itr2 ;
+  std::vector<Chunk>::const_iterator itr1, itr2 ;
   for ( itr1 = sections1.begin(), itr2 = sections2.begin() ;
         itr1 != sections1.end() ; ++itr1, ++itr2 )
    {
-    if (itr1->nom!=itr2->nom)
-     { throw std::runtime_error("Probleme de nom de section") ; }
-    if (itr1->variante!=itr2->variante)
-     { throw std::runtime_error("Probleme de variante de section") ; }
+    if (itr1->name!=itr2->name)
+     { throw std::runtime_error("Probleme de name de chunk") ; }
+    if (itr1->flavor!=itr2->flavor)
+     { throw std::runtime_error("Probleme de flavor de chunk") ; }
     if (itr1->version!=itr2->version)
-     { throw std::runtime_error("Probleme de version de section") ; }
-    if (itr1->colonnes!=itr2->colonnes)
-     { throw std::runtime_error("Probleme de colonnes") ; }
-    diff_contenu("Probleme de contenu",itr1->contenu,itr2->contenu) ;
+     { throw std::runtime_error("Probleme de version de chunk") ; }
+    if (itr1->columns!=itr2->columns)
+     { throw std::runtime_error("Probleme de columns") ; }
+    diff_contenu("Probleme de content",itr1->content,itr2->content) ;
    }
 
-  // reutilisation du meme objet pour deux lecture de suite
+  // reutilisation du meme objet pour deux reading de suite
 
 
   return 0 ;

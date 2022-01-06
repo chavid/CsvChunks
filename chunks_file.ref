@@ -1,7 +1,7 @@
 open in read mode: chunks_file.in.csv
-Premier element : SERIE = MPPC4
+First element : STRING = DUMMY
 open in read mode: chunks_file.in.csv
-Premier element : SERIE = MPPC4
+First element : STRING = DUMMY
 open in read mode: chunks_file.in.csv
 mppc4 mpc1 4009 JOSEPHINE(Melanie) non oui non AN  PH FR 
 mppc4 mpc1 4405 BENECH(Laurie) non oui non AN CH PH FR 

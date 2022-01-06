@@ -1,11 +1,9 @@
 
-#include "util/outils.h" // for VxException
-#include "util/afficheur.h"
-#include "util/fichier_table.h"
-
+#include "chunks_file.h"
+#include <stdexcept>
 #include <string>
 #include <vector>
-#include <ostream>
+#include <iostream>
 
 struct Section
  {
@@ -20,28 +18,28 @@ struct Section
 void lecture
  ( const std::string & chemin,
    std::vector<Section> & sections,
-   FichierTable & finput
+   ChunksFile & finput
  )
  {
-  if (!(finput.ouvrir(chemin)))
+  if (!(finput.open(chemin)))
    {
     std::ostringstream oss ;
-    oss<<"echec à l'ouverture en lecture du fichier : "<<chemin<<endl ;
-    throw VxException(oss.str()) ;
+    oss<<"echec à l'ouverture en lecture du fichier : "<<chemin<<std::endl ;
+    throw std::runtime_error(oss.str()) ;
    }
 
-  while (finput.nouvelle_section())
+  while (finput.next_chunk())
    {
-    if ((finput.section_nom()!="CANDIDATS")||(finput.section_version()!="v5"))
+    if ((finput.chunk_name()!="CANDIDATS")||(finput.chunk_version()!="v5"))
      { continue ; }
     Section section ;
-    section.nom = finput.section_nom() ;
-    section.variante = finput.section_variante() ;
-    section.version = finput.section_version() ;
-    section.colonnes = finput.section_colonnes() ;
+    section.nom = finput.chunk_name() ;
+    section.variante = finput.chunk_flavor() ;
+    section.version = finput.chunk_version() ;
+    section.colonnes = finput.chunk_columns() ;
     for ( auto colonne : section.colonnes )
       section.largeurs.push_back(colonne.size()) ;
-    while (finput.nouvelle_ligne())
+    while (finput.read_next_line())
      {
       std::vector<std::string> ligne ;
       std::string mot ;
@@ -54,7 +52,7 @@ void lecture
          { section.largeurs[colonne] = mot.size() ; }
         colonne++ ;
        }
-      std::cout<<endl ;
+      std::cout<<std::endl ;
       section.contenu.push_back(ligne) ;
      }
     sections.push_back(section) ;
@@ -64,32 +62,32 @@ void lecture
 void ecriture
  ( const std::string & chemin,
    const std::vector<Section> & sections,
-   FichierTable & foutput  
+   ChunksFile & foutput  
  )
  {
-  if (!(foutput.ouvrir(chemin,"WRITE")))
+  if (!(foutput.open(chemin,"WRITE")))
    {
     std::ostringstream oss ;
-    oss<<"echec à l'ouverture en ecriture du fichier : "<<chemin<<endl ;
-    throw VxException(oss.str()) ;
+    oss<<"echec à l'ouverture en ecriture du fichier : "<<chemin<<std::endl ;
+    throw std::runtime_error(oss.str()) ;
    }
   
   for ( auto section : sections )
    {
-    foutput.section_nom(section.nom) ;
-    foutput.section_variante(section.variante) ;
-    foutput.section_version(section.version) ;
-    foutput.section_colonnes(section.colonnes) ;
-    foutput.nouveau_format(section.largeurs) ;
-    foutput.section_write() ;
+    foutput.chunk_name(section.nom) ;
+    foutput.chunk_flavor(section.variante) ;
+    foutput.chunk_version(section.version) ;
+    foutput.chunk_columns(section.colonnes) ;
+    foutput.change_format(section.largeurs) ;
+    foutput.chunk_write() ;
     for ( auto ligne : section.contenu )
      {
       for ( auto mot : ligne )
         { foutput<<mot ; }
-      foutput.saut_de_ligne() ;
+      foutput.write_next_line() ;
      }
 
-    foutput.saut_de_ligne() ;
+    foutput.write_next_line() ;
    }
  
  }
@@ -101,13 +99,13 @@ void diff_ligne
  )
  {
   if (ligne1.size()!=ligne2.size())
-   { throw VxException(message) ; }
+   { throw std::runtime_error(message) ; }
   auto imotmax {ligne1.size()} ;
   decltype(imotmax) imot {0} ;
   for ( ; imot<imotmax ; ++imot )
    {
     if (ligne1[imot]!=ligne2[imot])
-     { throw VxException(message) ; }
+     { throw std::runtime_error(message) ; }
    } 
  }
 
@@ -118,52 +116,43 @@ void diff_contenu
  )
  {
   if (contenu1.size()!=contenu2.size())
-   { throw VxException(message) ; }
+   { throw std::runtime_error(message) ; }
   auto ilignemax {contenu1.size()} ;
   decltype(ilignemax) iligne {0} ;
   for ( ; iligne<ilignemax ; ++iligne )
    { diff_ligne(message,contenu1[iligne],contenu2[iligne]) ; } 
  }
 
-int main( int argc, const char * * argv )
+int main()
  {
-  Afficheur message("main> ","./.fichier_table.log") ;
-  Afficheur::change_defaut(&message) ;
-
-  // verification des arguments de la ligne de commande
-  if (argc<2)
-   { throw VxException("Quel fichier voulez-vous ouvrir ?") ; }
-  if (argc>2)
-   { throw VxException("Trop d'arguments sur la ligne de commande !") ; }
-
-  // tests de reutilisation de FichierTable avec ventilx.cfg
+  // reading a name/value list
   std::string element ;
-  FichierTable ft(true) ;
-  ft.ouvrir("ventilx.cfg") ; ft.nouvelle_ligne() ; element = "" ; ft>>element ; std::cout<<"Premier element : "<<element<<endl ;
-  ft.ouvrir("ventilx.cfg") ; ft.nouvelle_ligne() ; element = "" ; ft>>element ; std::cout<<"Premier element : "<<element<<endl ;
+  ChunksFile ft(true) ;
+  ft.open("chunks_file.in.csv") ; ft.read_next_line() ; element = "" ; ft>>element ; std::cout<<"Premier element : "<<element<<std::endl ;
+  ft.open("chunks_file.in.csv") ; ft.read_next_line() ; element = "" ; ft>>element ; std::cout<<"Premier element : "<<element<<std::endl ;
 
-  // test de contenu
+  // reading csv chunks
   std::vector<Section> sections1, sections2 ;
 
-  lecture(argv[1],sections1,ft) ;
-  ecriture("fichier_table.csv",sections1,ft) ;
-  lecture("fichier_table.csv",sections2,ft) ;
+  lecture("chunks_file.in.csv",sections1,ft) ;
+  ecriture("chunks_file.out.csv",sections1,ft) ;
+  lecture("chunks_file.out.csv",sections2,ft) ;
 
   if (sections1.size()!=sections2.size())
-   { throw VxException("Probleme de nombre de sections") ; }
+   { throw std::runtime_error("Probleme de nombre de sections") ; }
 
   std::vector<Section>::const_iterator itr1, itr2 ;
   for ( itr1 = sections1.begin(), itr2 = sections2.begin() ;
         itr1 != sections1.end() ; ++itr1, ++itr2 )
    {
     if (itr1->nom!=itr2->nom)
-     { throw VxException("Probleme de nom de section") ; }
+     { throw std::runtime_error("Probleme de nom de section") ; }
     if (itr1->variante!=itr2->variante)
-     { throw VxException("Probleme de variante de section") ; }
+     { throw std::runtime_error("Probleme de variante de section") ; }
     if (itr1->version!=itr2->version)
-     { throw VxException("Probleme de version de section") ; }
+     { throw std::runtime_error("Probleme de version de section") ; }
     if (itr1->colonnes!=itr2->colonnes)
-     { throw VxException("Probleme de colonnes") ; }
+     { throw std::runtime_error("Probleme de colonnes") ; }
     diff_contenu("Probleme de contenu",itr1->contenu,itr2->contenu) ;
    }
 

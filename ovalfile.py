@@ -4,18 +4,9 @@
 
 targets = [
 
-    { "name" : "date" , "command" : "./date.exe"  },
-    { "name" : "periodes_ids" , "command" : "./periodes_ids.exe"  },
-    { "name" : "heures" , "command" : "./heures.exe"  },
-    { "name" : "outils" , "command" : "./outils.exe"  },
-    { "name" : "afficheur" , "command" : "./afficheur.exe"  },
-    { "name" : "par_lettres" , "command" : "./par_lettres.exe"  },
-    { "name" : "type_entier" , "command" : "./type_entier.exe"  },
-    { "name" : "collection_rangee" , "command" : "./collection_rangee.exe"  },
-    { "name" : "fichier_table" , "command" : "./fichier_table.exe ../input/candidats.csv"  },
-    { "name" : "fichier_pdf" , "command" : "./fichier_pdf.exe"  },
-    { "name" : "configurable" , "command" : "./configurable.exe"  },
-    { "name" : "random" , "command" : "./random.exe"  },
+    { "name" : "strong_int" , "command" : "./strong_int.exe"  },
+    { "name" : "frequent_strings" , "command" : "./frequent_strings.exe"  },
+    { "name" : "chunks_file" , "command" : "./chunks_file.exe"  },
 
 ]
 

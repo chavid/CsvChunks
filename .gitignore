@@ -1,3 +1,8 @@
+# oval
+.oval*
+__pycache__
+chunks_file.out.csv
+
 # Prerequisites
 *.d
 

@@ -1,3 +1,26 @@
+SERIE = MPPC4
+ENTREES = \
+  ../../input/examinateurs.csv \
+  ../input/entrees.csv \
+  ../input/candidats.csv \
+  ../input/creneaux.csv \
+  ../input/limites_demi_journees.csv
+VERSION = v0
+PREMIER_JOUR = 2019/06/17
+NOMBRE_JOURS = 7
+MAX_RECURSIONS = 6
+MAX_LIENS = 1000
+CHANGEMENT_DE_SITE = 1
+MODE_TP = 0
+PRE_VALIDE_PRIORITES = 1
+REORDONNE = 0 # BUG !
+COMPACTE = 1
+RANDOM = 0
+
+# Pour les simulations
+DEMIS_SEMAINE = 1 2 3 4 5 6 7
+DEMIS_WE = 10 11 12 13
+
 > CANDIDATS MPPC v5
  serie ; commission ; anonymat ; nom                  ; temps-additionnel ; adm-x ; adm-espci ; lo ; lf ; ads ; origine ;
  mppc4 ; mpc1       ; 4009     ; JOSEPHINE(Melanie)   ; non               ; oui   ; non       ; AN ;    ; PH  ; FR      ;

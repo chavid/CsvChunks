@@ -1,7 +1,5 @@
 
-
-#include "util/fichier_table.h"
-#include "util/afficheur.h"
+#include "chunks_file.h"
 #include <regex>
 #include <iostream>
 #include <iomanip>
@@ -13,20 +11,20 @@
 //
 // ***********************************************************************
 
-FichierTable::FichierTable
+ChunksFile::ChunksFile
  ( bool debug )
  : is_ok_(true), debug_(debug),
-   nom_(""), option_(""),
+   name_(""), option_(""),
    is_eol_(false),is_eof_(false)
  {}
 
-bool FichierTable::ouvrir
- ( const std::string & nom,
-   const std::string & option )
+bool ChunksFile::open
+ ( std::string_view name,
+   std::string_view option )
  {
   if (ofile_.is_open()||ifile_.is_open())
-   { fermer() ; }
-  nom_ = nom ;
+   { close() ; }
+  name_ = name ;
   option_ = option ;
   is_ok_ = true ;
 
@@ -34,16 +32,16 @@ bool FichierTable::ouvrir
   if (option_=="READ")
    {
     if (debug_)
-     { Afficheur::defaut(VX::INFO)<<"ouverture en lecture du fichier "<<nom_<<endl ; }
-    ifile_.open(nom_.c_str()) ;
+     { std::cout<<"open in read mode: "<<name_<<std::endl ; }
+    ifile_.open(name_.c_str()) ;
     if (!ifile_.is_open())
      {
-      Afficheur::defaut(VX::INFO)<<"pas de fichier "<<nom_<<endl ;
-      fermer() ;
+      std::cout<<"failed open in read mode: "<<name_<<std::endl ;
+      close() ;
       is_ok_ = false ;
       return false ;
      }
-    iline_prete_ = false ;
+    iline_ready_ = false ;
     is_eol_ = false ;
     is_eof_ = false ;
     iline_.clear() ;
@@ -55,12 +53,12 @@ bool FichierTable::ouvrir
   else if (option_=="WRITE")
    {
     if (debug_)
-     { Afficheur::defaut(VX::INFO)<<"ouverture en ecriture du fichier "<<nom_<<endl ; }
-    ofile_.open(nom_.c_str()) ;
+     { std::cout<<"open in write mode: "<<name_<<std::endl ; }
+    ofile_.open(name_.c_str()) ;
     if (!ofile_.is_open())
      {
-      Afficheur::defaut(VX::INFO)<<"pas de fichier "<<nom_<<endl ;
-      fermer() ;
+      std::cout<<"failed open in write mode: "<<name_<<std::endl ;
+      close() ;
       is_ok_ = false ;
       return false ;
      }
@@ -71,40 +69,40 @@ bool FichierTable::ouvrir
   // Unknwon or not-implemented
   else
    {
-    fermer() ;
+    close() ;
     is_ok_ = false ;
     std::cerr
-      <<"[FichierTable::FichierTable] "
+      <<"[ChunksFile::ChunksFile] "
       <<"l'option "<<option_<<" n'est pas implantee"
-      <<", impossible d'ouvrir le fichier "<<nom_
-      <<endl ;
+      <<", impossible d'ouvrir le fichier "<<name_
+      <<std::endl ;
     return false ;
    }
  }
 
-bool FichierTable::fermer()
+bool ChunksFile::close()
  {
   ofile_.close() ;
   ifile_.close() ;
   iline_.clear() ;
   icell_.clear() ;
-  iline_prete_ = false ;
+  iline_ready_ = false ;
   is_eol_ = false ;
   is_eof_ = false ;
   is_ok_ = true ;
-  nom_ = "" ;
+  name_ = "" ;
   option_ = "" ;
   return true ;
  }
 
-FichierTable::~FichierTable()
- { fermer() ; }
+ChunksFile::~ChunksFile()
+ { close() ; }
 
-FichierTable::operator void *()
+ChunksFile::operator void *()
  {
   if ( ( !is_ok_ ) ||
-	   ( (option_=="READ") && ( (!pret_a_lire()) || (!iline_ ) ) ) ||
-       ( (option_=="WRITE") && !pret_a_ecrire() ) )
+	   ( (option_=="READ") && ( (!ready_for_reading()) || (!iline_ ) ) ) ||
+       ( (option_=="WRITE") && !ready_for_writing() ) )
    {
 	  return ((void*)0) ;
    }
@@ -117,62 +115,62 @@ FichierTable::operator void *()
 // READ Interface
 // ***************************************************************
 
-bool FichierTable::nouvelle_section()
+bool ChunksFile::next_chunk()
  {
   // cherche la prochaine entete de section
-  while ( prepare_ligne() && (iline_.peek()!='>' ) )
-   { iline_prete_ = false ; }
+  while ( prepare_line() && (iline_.peek()!='>' ) )
+   { iline_ready_ = false ; }
   // verifie qu'il y a bien une entete de section
   if ( iline_.peek()!='>' )
    { return false ; }
   // marque que la ligne a été prise en compte
-  iline_prete_ = false ;
+  iline_ready_ = false ;
   // extrait les informations de section
   // la première extraction sert à éliminer le caractère de section
   // on élimine les éventuels ";" qui trainent
   std::string prompt ;
-  section_nom_ = "" ;
-  section_variante_ = "" ;
-  section_version_ = "" ;
-  iline_>>prompt>>section_nom_>>section_variante_>>section_version_ ;
-  section_nom_ = std::regex_replace(section_nom_,std::regex(";*$"),"") ;
-  section_variante_ = std::regex_replace(section_variante_,std::regex(";*$"),"") ;
-  section_version_ = std::regex_replace(section_version_,std::regex(";*$"),"") ;
-  if (section_version_=="")
+  chunk_name_ = "" ;
+  chunk_flavor_ = "" ;
+  chunk_version_ = "" ;
+  iline_>>prompt>>chunk_name_>>chunk_flavor_>>chunk_version_ ;
+  chunk_name_ = std::regex_replace(chunk_name_,std::regex(";*$"),"") ;
+  chunk_flavor_ = std::regex_replace(chunk_flavor_,std::regex(";*$"),"") ;
+  chunk_version_ = std::regex_replace(chunk_version_,std::regex(";*$"),"") ;
+  if (chunk_version_=="")
    {
-    section_version_ = section_variante_ ;
-    section_variante_ = "" ;
+    chunk_version_ = chunk_flavor_ ;
+    chunk_flavor_ = "" ;
    }
   // depile les entetes de colonne
-  section_colonnes_.clear() ;
-  if (nouvelle_ligne())
+  chunk_columns_.clear() ;
+  if (read_next_line())
    {
     std::string colonne ;
     while ((*this)>>colonne)
       if (colonne.size()>0)
-        section_colonnes_.push_back(colonne) ;
+        chunk_columns_.push_back(colonne) ;
     return true ;
    }
   else
    { return false ; }
  }
 
-bool FichierTable::nouvelle_ligne()
+bool ChunksFile::read_next_line()
  {
   // verifie qu'il ne s'agit pas d'une entete de section
-  if ( ( !prepare_ligne() ) || ( iline_.peek()=='>' ) )
+  if ( ( !prepare_line() ) || ( iline_.peek()=='>' ) )
    { return false ; }
   // marque que la ligne a été prise en compte
-  iline_prete_ = false ;
+  iline_ready_ = false ;
   return true ;
  }
 
 
-bool FichierTable::prepare_ligne()
+bool ChunksFile::prepare_line()
  {
-  if ( (option_!="READ") || ! pret_a_lire() || ! ifile_ || ifile_.eof() )
+  if ( (option_!="READ") || ! ready_for_reading() || ! ifile_ || ifile_.eof() )
    { return false ; }
-  if ( iline_prete_ )
+  if ( iline_ready_ )
    { return true ; }
 
   // extract one line
@@ -181,7 +179,7 @@ bool FichierTable::prepare_ligne()
   std::string ligne ;
   std::getline(ifile_,ligne,'\n') ;
 
-  //std::cout<<"DEBUG: "<<ligne<<endl ;
+  //std::cout<<"DEBUG: "<<ligne<<std::endl ;
 
   // suppression des eventuels caracteres de
   // controle qui traineraient en fin de ligne
@@ -247,20 +245,20 @@ bool FichierTable::prepare_ligne()
     else
      {
       // suppression des lignes vides
-      return prepare_ligne() ;
+      return prepare_line() ;
      }
    }
   
   // alimente la istringstream
   iline_.str(ligne) ;
-  iline_prete_ = true ;
+  iline_ready_ = true ;
   return true ;
  }
 
 
-bool FichierTable::prepare_extraction()
+bool ChunksFile::prepare_extraction()
  {
-  if ( (option_!="READ") || ! pret_a_lire() || !iline_ )
+  if ( (option_!="READ") || ! ready_for_reading() || !iline_ )
    { return false ; }
 
   // extract one cell
@@ -271,7 +269,7 @@ bool FichierTable::prepare_extraction()
  }
 
 template <>
-FichierTable & operator>>< std::string >( FichierTable & ft, std::string & var )
+ChunksFile & operator>>< std::string >( ChunksFile & ft, std::string & var )
  {
   if (ft.prepare_extraction())
    { var = ft.icell_ ; }
@@ -279,7 +277,7 @@ FichierTable & operator>>< std::string >( FichierTable & ft, std::string & var )
  }
 
 template <>
-FichierTable & operator>>< bool >( FichierTable & ft, bool & var )
+ChunksFile & operator>>< bool >( ChunksFile & ft, bool & var )
  {
   if (!ft.prepare_extraction())
    { return ft ; }
@@ -291,7 +289,7 @@ FichierTable & operator>>< bool >( FichierTable & ft, bool & var )
    { var = false ; }
   else
    {
-    Afficheur::defaut(VX::AVERTISSEMENT)<<"valeur invalide pour un booleen : "<<ft.icell_<<endl ;
+    std::cout<<"WARNING: invalue bool value: "<<ft.icell_<<std::endl ;
     ft.is_ok_ = false ;
     return ft ;
    }
@@ -299,7 +297,7 @@ FichierTable & operator>>< bool >( FichierTable & ft, bool & var )
  }
 
 template <>
-FichierTable & operator>>< std::pair<int,int> >( FichierTable & ft, std::pair<int,int> & var )
+ChunksFile & operator>>< std::pair<int,int> >( ChunksFile & ft, std::pair<int,int> & var )
  {
   if (!ft.prepare_extraction())
    { return ft ; }
@@ -308,7 +306,7 @@ FichierTable & operator>>< std::pair<int,int> >( FichierTable & ft, std::pair<in
   std::string::size_type p = ft.icell_.find_first_of(':') ;
   if (p==std::string::npos)
    {
-    Afficheur::defaut(VX::AVERTISSEMENT)<<"valeur invalide pour une paire : "<<ft.icell_<<endl ;
+    std::cout<<"WARNING: invalid pair value: "<<ft.icell_<<std::endl ;
     ft.is_ok_ = false ;
     return ft ;
    }
@@ -319,17 +317,17 @@ FichierTable & operator>>< std::pair<int,int> >( FichierTable & ft, std::pair<in
   return ft ;
  }
 
-void FichierTable::verifie_colonnes( const std::string & colonnes ) const
+void ChunksFile::check_columns( const std::string & colonnes ) const
  {
   std::vector<std::string> split_colonnes ;
   std::istringstream iss(colonnes) ;
   std::string colonne ;
   while (std::getline(iss,colonne,';'))
     split_colonnes.push_back(colonne) ;
-  if (split_colonnes!=section_colonnes_)
+  if (split_colonnes!=chunk_columns_)
    {
     std::ostringstream oss ;
-    oss<<"[FichierTable::verifie_colonnes] Colonnes inattendues : "<<colonnes ;
+    oss<<"[ChunksFile::verifie_colonnes] Colonnes inattendues : "<<colonnes ;
     throw std::runtime_error(oss.str()) ;
    }
  }
@@ -339,52 +337,58 @@ void FichierTable::verifie_colonnes( const std::string & colonnes ) const
 // WRITE Interface
 // ***************************************************************
 
-void FichierTable::section_colonnes( const std::string & colonnes )
+void ChunksFile::chunk_columns( std::string_view columns )
  {
-  section_colonnes_.clear() ;
-  std::istringstream iss(colonnes) ;
-  std::string colonne ;
-  while (std::getline(iss,colonne,';'))
-    section_colonnes_.push_back(colonne) ;
+  chunk_columns_.clear() ;
+  std::string_view::size_type pos1 = 0 ;
+  std::string_view::size_type pos2 = columns.find(';',pos1) ;
+  while ( pos2 != std::string_view::npos )
+   {
+    chunk_columns_.push_back(std::string(columns.substr(pos1,pos2-pos1))) ;
+    pos1 = pos2+1 ;
+    pos2 = columns.find(';',pos1) ;
+   }
+  if (pos1<columns.size())
+   { chunk_columns_.push_back(std::string(columns.substr(pos1))) ; }
  }
 
-void FichierTable::section_write()
+void ChunksFile::chunk_write()
  {
-  if ( (option_!="WRITE") || ! pret_a_ecrire() )
+  if ( (option_!="WRITE") || ! ready_for_writing() )
    { return ; }
-  ofile_<<"> "<<section_nom_ ;
-  if (section_variante_!="")
-    ofile_<<" "<<section_variante_ ;
-  if (section_version_!="")
-    ofile_<<" "<<section_version_ ;
-  ofile_<<endl ;
+  ofile_<<"> "<<chunk_name_ ;
+  if (chunk_flavor_!="")
+    ofile_<<" "<<chunk_flavor_ ;
+  if (chunk_version_!="")
+    ofile_<<" "<<chunk_version_ ;
+  ofile_<<std::endl ;
 
   // colonnes avec largeurs
-  for ( auto colonne : section_colonnes_ )
+  for ( auto colonne : chunk_columns_ )
    { (*this)<<colonne ; }
-  (*this).saut_de_ligne() ;
+  (*this).write_next_line() ;
  }
 
-void FichierTable::efface_format()
+void ChunksFile::remove_format()
  {
-  if ( (option_!="WRITE") || ! pret_a_ecrire() )
+  if ( (option_!="WRITE") || ! ready_for_writing() )
    { return ; }
-  largeurs_.clear() ;
+  widths_.clear() ;
  }
 
-void FichierTable::nouveau_format( const std::vector<std::size_t> & largeurs )
+void ChunksFile::change_format( const std::vector<std::size_t> & largeurs )
  {
-  if ( (option_!="WRITE") || ! pret_a_ecrire() )
+  if ( (option_!="WRITE") || ! ready_for_writing() )
    { return ; }
-  largeurs_ = largeurs ;
+  widths_ = largeurs ;
  }
 
-void FichierTable::saut_de_ligne()
+void ChunksFile::write_next_line()
  {
-  if ( (option_!="WRITE") || ! pret_a_ecrire() )
+  if ( (option_!="WRITE") || ! ready_for_writing() )
    { return ; }
-  ofile_<<endl ;
-  indice_courant_ = 0 ;
+  ofile_<<std::endl ;
+  current_indice_ = 0 ;
  }
 
 
@@ -392,9 +396,9 @@ void FichierTable::saut_de_ligne()
 // UTILITIES
 // ****************************************************************************
 
-bool FichierTable::pret_a_lire()
+bool ChunksFile::ready_for_reading()
  { return ( is_ok_ && ifile_.is_open() && !is_eof_ )  ; }
 
-bool FichierTable::pret_a_ecrire()
+bool ChunksFile::ready_for_writing()
  { return ( is_ok_ && ofile_.is_open() ) ; }
 

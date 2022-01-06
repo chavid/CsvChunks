@@ -1,8 +1,6 @@
 
-#ifndef FichierTable_h
-#define FichierTable_h 1
-
-//#include "data/matieres.h"
+#ifndef CHUNKS_FILE_H
+#define CHUNKS_FILE_H
 
 #include <string>
 #include <vector>
@@ -11,72 +9,72 @@
 #include <utility>
 #include <iomanip>
 
-class FichierTable
+class ChunksFile
  {
   public :
 
-    FichierTable( bool debug =false ) ;
-    bool ouvrir
-     ( const std::string & nom,
-       const std::string & option = "READ" ) ;
+    ChunksFile( bool debug =false ) ;
+    bool open
+     ( std::string_view name,
+       std::string_view option = "READ" ) ;
     operator void *() ;
-    bool fermer() ;
-    ~FichierTable() ;
+    bool close() ;
+    ~ChunksFile() ;
 
     // Interface de lecture
-    bool nouvelle_section() ;
-    const std::string & section_nom() { return section_nom_ ; }
-    const std::string & section_variante() { return section_variante_ ; }
-    const std::string & section_version() { return section_version_ ; }
-    const std::vector<std::string> & section_colonnes() { return section_colonnes_ ; }
-    void verifie_colonnes( const std::string & colonnes ) const ;
-    bool nouvelle_ligne() ;
+    bool next_chunk() ;
+    const std::string & chunk_name() { return chunk_name_ ; }
+    const std::string & chunk_flavor() { return chunk_flavor_ ; }
+    const std::string & chunk_version() { return chunk_version_ ; }
+    const std::vector<std::string> & chunk_columns() { return chunk_columns_ ; }
+    void check_columns( const std::string & colonnes ) const ;
+    bool read_next_line() ;
     template <typename T>
-    friend FichierTable & operator>>( FichierTable &, T & var ) ;
+    friend ChunksFile & operator>>( ChunksFile &, T & var ) ;
 
     // Interface d'écriture
-    void section_nom( const std::string & nom ) { section_nom_ = nom ; }
-    void section_variante( const std::string & variante ) { section_variante_ = variante ; }
-    void section_version( const std::string & version ) { section_version_ = version ; }
-    void section_colonnes( const std::vector<std::string> & colonnes ) { section_colonnes_ = colonnes ; }
-    void section_colonnes( const std::string & colonnes ) ;
-    void nouveau_format( const std::vector<std::size_t> & largeurs ) ;
-    void section_write() ;
-    void efface_format() ;
-    void saut_de_ligne() ;
+    void chunk_name( std::string_view nom ) { chunk_name_ = nom ; }
+    void chunk_flavor( std::string_view variante ) { chunk_flavor_ = variante ; }
+    void chunk_version( std::string_view version ) { chunk_version_ = version ; }
+    void chunk_columns( const std::vector<std::string> & colonnes ) { chunk_columns_ = colonnes ; }
+    void chunk_columns( std::string_view colonnes ) ;
+    void change_format( const std::vector<std::size_t> & largeurs ) ;
+    void chunk_write() ;
+    void remove_format() ;
+    void write_next_line() ;
     template <typename T>
-    friend FichierTable & operator<<( FichierTable &, T var ) ;
+    friend ChunksFile & operator<<( ChunksFile &, T var ) ;
 
   private :
 
     bool is_ok_ ;
     bool debug_ ;
 
-    std::string nom_ ;
+    std::string name_ ;
     std::string option_ ;
 
     // section courante
-    std::string section_nom_ ;
-    std::string section_variante_ ;
-    std::string section_version_ ;
-    std::vector<std::string> section_colonnes_ ;
+    std::string chunk_name_ ;
+    std::string chunk_flavor_ ;
+    std::string chunk_version_ ;
+    std::vector<std::string> chunk_columns_ ;
 
     std::ofstream ofile_ ;
-    std::vector<std::size_t>::size_type indice_courant_ = 0 ;
-    std::vector<std::size_t> largeurs_ ;
+    std::vector<std::size_t>::size_type current_indice_ = 0 ;
+    std::vector<std::size_t> widths_ ;
 
     std::ifstream ifile_ ;
     std::istringstream iline_ ;
-    bool iline_prete_ = false ;
+    bool iline_ready_ = false ;
     std::string icell_ ;
     bool is_eol_ ;
     bool is_eof_ ;
 
     bool prepare_extraction() ;
-    bool prepare_ligne() ;
+    bool prepare_line() ;
 
-    bool pret_a_lire() ;   // cannot be const because of is_open()
-    bool pret_a_ecrire() ; // which is not const with gcc 3.4.6
+    bool ready_for_reading() ;   // cannot be const because of is_open()
+    bool ready_for_writing() ; // which is not const with gcc 3.4.6
  } ;
 
 
@@ -85,7 +83,7 @@ class FichierTable
 //========================================================
 
 template <typename T>
-FichierTable & operator>>( FichierTable & ft, T & var )
+ChunksFile & operator>>( ChunksFile & ft, T & var )
  {
   if (ft.prepare_extraction())
    {
@@ -96,30 +94,30 @@ FichierTable & operator>>( FichierTable & ft, T & var )
  }
 
 template <>
-FichierTable & operator>>< std::string >( FichierTable &, std::string & var ) ;
+ChunksFile & operator>>< std::string >( ChunksFile &, std::string & var ) ;
 
 template <>
-FichierTable & operator>>< bool >( FichierTable &, bool & var ) ;
+ChunksFile & operator>>< bool >( ChunksFile &, bool & var ) ;
 
 template <>
-FichierTable & operator>>< std::pair<int,int> >( FichierTable &, std::pair<int,int> & var ) ;
+ChunksFile & operator>>< std::pair<int,int> >( ChunksFile &, std::pair<int,int> & var ) ;
 
 template <typename T>
-FichierTable & operator<<( FichierTable & ft, T var )
+ChunksFile & operator<<( ChunksFile & ft, T var )
  {
-  if ( (ft.option_!="WRITE") || ! ft.pret_a_ecrire() )
+  if ( (ft.option_!="WRITE") || ! ft.ready_for_writing() )
    { return ft ; }
-  if (ft.largeurs_.size()==0)
+  if (ft.widths_.size()==0)
    { ft.ofile_<<var ; }
   else
    {
     std::ostringstream oss ;
     oss<<var ;
     ft.ofile_<<" " ;
-    if (ft.indice_courant_<ft.largeurs_.size())
-     { ft.ofile_<<std::setw(ft.largeurs_[ft.indice_courant_]) ; }
+    if (ft.current_indice_<ft.widths_.size())
+     { ft.ofile_<<std::setw(ft.widths_[ft.current_indice_]) ; }
     ft.ofile_<<oss.str()<<" ;" ;
-    ft.indice_courant_++ ;
+    ft.current_indice_++ ;
    }
   return ft ;
  }

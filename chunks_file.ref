@@ -1,8 +1,8 @@
-main> ouverture en lecture du fichier ventilx.cfg
+open in read mode: chunks_file.in.csv
 Premier element : SERIE = MPPC4
-main> ouverture en lecture du fichier ventilx.cfg
+open in read mode: chunks_file.in.csv
 Premier element : SERIE = MPPC4
-main> ouverture en lecture du fichier ../input/candidats.csv
+open in read mode: chunks_file.in.csv
 mppc4 mpc1 4009 JOSEPHINE(Melanie) non oui non AN  PH FR 
 mppc4 mpc1 4405 BENECH(Laurie) non oui non AN CH PH FR 
 mppc4 mpc1 4504 BAIN(Manon) non oui non AN  MA FR 
@@ -81,8 +81,8 @@ mppc4 pcens 919179 GAROT(Ludivine) non 19179 AN
 mppc4 pcens 922113 REBOUX(Emeline) non 22113 AN    
 mppc4 pcens 942510 DORMOY(Mehdi) non 42510 AN    
 mppc4 pcens 945224 TERRISSE(Laurine) non 45224 AN    
-main> ouverture en ecriture du fichier fichier_table.csv
-main> ouverture en lecture du fichier fichier_table.csv
+open in write mode: chunks_file.out.csv
+open in read mode: chunks_file.out.csv
 mppc4 mpc1 4009 JOSEPHINE(Melanie) non oui non AN  PH FR 
 mppc4 mpc1 4405 BENECH(Laurie) non oui non AN CH PH FR 
 mppc4 mpc1 4504 BAIN(Manon) non oui non AN  MA FR 

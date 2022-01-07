@@ -13,23 +13,21 @@
 
 ChunksFile::ChunksFile
  ( bool debug )
- : is_ok_(true), debug_(debug),
-   name_(""), option_(""),
-   is_eol_(false),is_eof_(false)
+ : debug_(debug), is_eol_(false),is_eof_(false)
  {}
 
 bool ChunksFile::open
  ( std::string_view name,
-   std::string_view option )
+   Mode mode )
  {
   if (ofile_.is_open()||ifile_.is_open())
    { close() ; }
   name_ = name ;
-  option_ = option ;
+  mode_ = mode ;
   is_ok_ = true ;
 
   // READ opening
-  if (option_=="READ")
+  if (mode_==Mode::READ)
    {
     if (debug_)
      { std::cout<<"open in read mode: "<<name_<<std::endl ; }
@@ -45,12 +43,14 @@ bool ChunksFile::open
     is_eol_ = false ;
     is_eof_ = false ;
     iline_.clear() ;
-    icell_.clear() ;
+    icells_.clear() ;
+    current_indice_ = 0 ;
+    pcell_ = nullptr ;
     return true ;
    }
 
   // WRITE opening
-  else if (option_=="WRITE")
+  else if (mode_==Mode::WRITE)
    {
     if (debug_)
      { std::cout<<"open in write mode: "<<name_<<std::endl ; }
@@ -72,9 +72,8 @@ bool ChunksFile::open
     close() ;
     is_ok_ = false ;
     std::cerr
-      <<"[ChunksFile::ChunksFile] "
-      <<"l'option "<<option_<<" n'est pas implantee"
-      <<", impossible d'ouvrir le fichier "<<name_
+      <<"[ChunksFile::open] "<<name_
+      <<" can only be opened in mode READ or WRITE"
       <<std::endl ;
     return false ;
    }
@@ -85,13 +84,15 @@ bool ChunksFile::close()
   ofile_.close() ;
   ifile_.close() ;
   iline_.clear() ;
-  icell_.clear() ;
+  icells_.clear() ;
+  current_indice_ = 0 ;
+  pcell_ = nullptr ;
   iline_ready_ = false ;
   is_eol_ = false ;
   is_eof_ = false ;
   is_ok_ = true ;
   name_ = "" ;
-  option_ = "" ;
+  mode_ = Mode::UNDEFINED ;
   return true ;
  }
 
@@ -101,8 +102,8 @@ ChunksFile::~ChunksFile()
 ChunksFile::operator void *()
  {
   if ( ( !is_ok_ ) ||
-	   ( (option_=="READ") && ( (!ready_for_reading()) || (!iline_ ) ) ) ||
-       ( (option_=="WRITE") && !ready_for_writing() ) )
+	   ( (mode_==Mode::READ) && ( (!ready_for_reading()) || eol_ ) ) ||
+       ( (mode_==Mode::WRITE) && !ready_for_writing() ) )
    {
 	  return ((void*)0) ;
    }
@@ -115,15 +116,15 @@ ChunksFile::operator void *()
 // READ Interface
 // ***************************************************************
 
-bool ChunksFile::next_chunk()
+bool ChunksFile::read_next_chunk()
  {
   // cherche la prochaine entete de section
-  while ( prepare_line() && (iline_.peek()!='>' ) )
+  while ( prepare_line() && (icells_.front().front()!='>' ) )
    { iline_ready_ = false ; }
   // verifie qu'il y a bien une entete de section
-  if ( iline_.peek()!='>' )
+  if ( ( std::empty(icells_) ) || ( icells_.front().front()!='>' ) )
    { return false ; }
-  // marque que la ligne a été prise en compte
+  // marque que la line a été prise en compte
   iline_ready_ = false ;
   // extrait les informations de section
   // la première extraction sert à éliminer le caractère de section
@@ -132,7 +133,8 @@ bool ChunksFile::next_chunk()
   chunk_name_ = "" ;
   chunk_flavor_ = "" ;
   chunk_version_ = "" ;
-  iline_>>prompt>>chunk_name_>>chunk_flavor_>>chunk_version_ ;
+  std::istringstream iss(icells_.front()) ;
+  iss>>prompt>>chunk_name_>>chunk_flavor_>>chunk_version_ ;
   chunk_name_ = std::regex_replace(chunk_name_,std::regex(";*$"),"") ;
   chunk_flavor_ = std::regex_replace(chunk_flavor_,std::regex(";*$"),"") ;
   chunk_version_ = std::regex_replace(chunk_version_,std::regex(";*$"),"") ;
@@ -141,14 +143,18 @@ bool ChunksFile::next_chunk()
     chunk_version_ = chunk_flavor_ ;
     chunk_flavor_ = "" ;
    }
-  // depile les entetes de colonne
+
+  // depile les entetes de column
   chunk_columns_.clear() ;
   if (read_next_line())
    {
-    std::string colonne ;
-    while ((*this)>>colonne)
-      if (colonne.size()>0)
-        chunk_columns_.push_back(colonne) ;
+    std::string column ;
+    while ((*this)>>column)
+    if (column.size()>0)
+     {
+      chunk_columns_.push_back(column) ;
+      column = "" ;
+     }
     return true ;
    }
   else
@@ -158,65 +164,67 @@ bool ChunksFile::next_chunk()
 bool ChunksFile::read_next_line()
  {
   // verifie qu'il ne s'agit pas d'une entete de section
-  if ( ( !prepare_line() ) || ( iline_.peek()=='>' ) )
+  if ( ( !prepare_line() ) ||
+       ( (!std::empty(icells_.front())) && ( icells_.front().front()=='>' ) ) )
    { return false ; }
-  // marque que la ligne a été prise en compte
+  // marque que la line a été prise en compte
   iline_ready_ = false ;
   return true ;
  }
 
-
 bool ChunksFile::prepare_line()
  {
-  if ( (option_!="READ") || ! ready_for_reading() || ! ifile_ || ifile_.eof() )
+  if ( (mode_!=Mode::READ) || !ready_for_reading() || ! ifile_ || ifile_.eof() )
    { return false ; }
   if ( iline_ready_ )
    { return true ; }
 
   // extract one line
   iline_.clear() ;
-  icell_.clear() ;
-  std::string ligne ;
-  std::getline(ifile_,ligne,'\n') ;
+  icells_.clear() ;
+  current_indice_ = 0 ;
+  pcell_ = nullptr ;
+  std::string line ;
+  std::getline(ifile_,line,'\n') ;
 
-  //std::cout<<"DEBUG: "<<ligne<<std::endl ;
+  //std::cout<<"DEBUG: "<<line<<std::endl ;
 
   // suppression des eventuels caracteres de
-  // controle qui traineraient en fin de ligne
-  while ( (!ligne.empty()) && (ligne.back()<32) )
-   { ligne.pop_back() ; }
+  // controle qui traineraient en fin de line
+  while ( (!line.empty()) && (line.back()<32) )
+   { line.pop_back() ; }
 
   // jonction automatique en cas de \ final
-  while (ligne.back()=='\\')
+  while (line.back()=='\\')
    {
-    ligne.pop_back() ;
-    std::string ligne2 ;
-    std::getline(ifile_,ligne2,'\n') ;
-    while ( (!ligne2.empty()) && (ligne2.back()<32) )
-     { ligne2.pop_back() ; }
-    ligne.append(ligne2) ;
+    line.pop_back() ;
+    std::string line2 ;
+    std::getline(ifile_,line2,'\n') ;
+    while ( (!line2.empty()) && (line2.back()<32) )
+     { line2.pop_back() ; }
+    line.append(line2) ;
    }
 
   // suppression des commentaires
-  std::string::size_type p = ligne.find_first_of('#') ;
+  std::string::size_type p = line.find_first_of('#') ;
   if (p!=std::string::npos)
-   { ligne.erase(p) ; }
+   { line.erase(p) ; }
 
   // nettoyage des espaces
-  ligne = std::regex_replace(ligne,std::regex("^\\s+"),"") ;
-  ligne = std::regex_replace(ligne,std::regex("\\s+$"),"") ;
-  ligne = std::regex_replace(ligne,std::regex("\\s+")," ") ;
+  line = std::regex_replace(line,std::regex("^\\s+"),"") ;
+  line = std::regex_replace(line,std::regex("\\s+$"),"") ;
+  line = std::regex_replace(line,std::regex("\\s+")," ") ;
 
   // nettoyage des delimiteurs
-  ligne = std::regex_replace(ligne,std::regex("\\s*;\\s*"),";") ;
+  line = std::regex_replace(line,std::regex("\\s*;\\s*"),";") ;
   // en fait, je dois garder les ; finaux, sous peine de
   // voir des valeurs dupliquées non intentionnellement
-  //ligne = std::regex_replace(ligne,std::regex(";*$"),"") ;
-  //ligne = std::regex_replace(ligne,std::regex("^;*$"),"") ;
-  //ligne = std::regex_replace(ligne,std::regex("^>([^;]*);*$"),">$1") ;
+  //line = std::regex_replace(line,std::regex(";*$"),"") ;
+  //line = std::regex_replace(line,std::regex("^;*$"),"") ;
+  //line = std::regex_replace(line,std::regex("^>([^;]*);*$"),">$1") ;
 
   // élimination des caractères accentués
-  for ( auto & c : ligne )
+  for ( auto & c : line )
     {
      unsigned char uc = c ;
      if ((192<=uc)&&(uc<=197)) c = 'A' ;
@@ -234,8 +242,8 @@ bool ChunksFile::prepare_line()
      if ((249<=uc)&&(uc<=252)) c = 'u' ;
     }
 
-  // fin de fichier ou suppression d'une ligne vide
-  if (ligne.empty())
+  // fin de fichier ou suppression d'une line vide
+  if (line.empty())
    {
     if ((!ifile_)||ifile_.eof())
      {
@@ -244,35 +252,45 @@ bool ChunksFile::prepare_line()
      }
     else
      {
-      // suppression des lignes vides
+      // suppression des lines vides
       return prepare_line() ;
      }
    }
   
   // alimente la istringstream
-  iline_.str(ligne) ;
+  iline_.str(line) ;
   iline_ready_ = true ;
+
+  // pre-extract cells
+  icells_.clear() ;
+  std::string cell ;
+  while (std::getline(iline_,cell,';'))
+   { icells_.push_back(std::move(cell)) ; }
+  current_indice_ = 0 ;
+  eol_ = false ;
+  pcell_ = nullptr ;
+
   return true ;
  }
 
-
 bool ChunksFile::prepare_extraction()
  {
-  if ( (option_!="READ") || ! ready_for_reading() || !iline_ )
+  if ( (mode_!=Mode::READ) || (!ready_for_reading()))
    { return false ; }
-
-  // extract one cell
-  icell_.clear() ;
-  std::getline(iline_,icell_,';') ;
-
-  return (iline_||!icell_.empty()) ;
+  else if (current_indice_>=icells_.size())
+   { eol_ = true ; return false ; }
+  else
+   {
+    pcell_ = &(icells_[current_indice_++]) ;
+    return (!(pcell_->empty())) ;
+   }
  }
 
 template <>
 ChunksFile & operator>>< std::string >( ChunksFile & ft, std::string & var )
  {
   if (ft.prepare_extraction())
-   { var = ft.icell_ ; }
+   { var = (*ft.pcell_) ; }
   return ft ;
  }
 
@@ -281,15 +299,15 @@ ChunksFile & operator>>< bool >( ChunksFile & ft, bool & var )
  {
   if (!ft.prepare_extraction())
    { return ft ; }
-  if (ft.icell_.empty())
+  if ((*ft.pcell_).empty())
    { return ft ; }
-  if ((ft.icell_=="oui")||(ft.icell_=="O")||(ft.icell_=="yes")||(ft.icell_=="Y"))
+  if (((*ft.pcell_)=="oui")||((*ft.pcell_)=="O")||((*ft.pcell_)=="yes")||((*ft.pcell_)=="Y"))
    { var = true ; }
-  else if ((ft.icell_=="non")||(ft.icell_=="no")||(ft.icell_=="N"))
+  else if (((*ft.pcell_)=="non")||((*ft.pcell_)=="no")||((*ft.pcell_)=="N"))
    { var = false ; }
   else
    {
-    std::cout<<"WARNING: invalue bool value: "<<ft.icell_<<std::endl ;
+    std::cout<<"WARNING: invalue bool value: "<<(*ft.pcell_)<<std::endl ;
     ft.is_ok_ = false ;
     return ft ;
    }
@@ -301,18 +319,18 @@ ChunksFile & operator>>< std::pair<int,int> >( ChunksFile & ft, std::pair<int,in
  {
   if (!ft.prepare_extraction())
    { return ft ; }
-  if (ft.icell_.empty())
+  if ((*ft.pcell_).empty())
    { return ft ; }
-  std::string::size_type p = ft.icell_.find_first_of(':') ;
+  std::string::size_type p = (*ft.pcell_).find_first_of(':') ;
   if (p==std::string::npos)
    {
-    std::cout<<"WARNING: invalid pair value: "<<ft.icell_<<std::endl ;
+    std::cout<<"WARNING: invalid pair value: "<<(*ft.pcell_)<<std::endl ;
     ft.is_ok_ = false ;
     return ft ;
    }
   else
-   { ft.icell_[p] = ' ' ; }
-  std::istringstream iss(ft.icell_) ;
+   { (*ft.pcell_)[p] = ' ' ; }
+  std::istringstream iss((*ft.pcell_)) ;
   iss>>var.first>>var.second ;
   return ft ;
  }
@@ -321,9 +339,9 @@ void ChunksFile::check_columns( const std::string & colonnes ) const
  {
   std::vector<std::string> split_colonnes ;
   std::istringstream iss(colonnes) ;
-  std::string colonne ;
-  while (std::getline(iss,colonne,';'))
-    split_colonnes.push_back(colonne) ;
+  std::string column ;
+  while (std::getline(iss,column,';'))
+    split_colonnes.push_back(column) ;
   if (split_colonnes!=chunk_columns_)
    {
     std::ostringstream oss ;
@@ -354,7 +372,7 @@ void ChunksFile::chunk_columns( std::string_view columns )
 
 void ChunksFile::chunk_write()
  {
-  if ( (option_!="WRITE") || ! ready_for_writing() )
+  if ( (mode_!=Mode::WRITE) || ! ready_for_writing() )
    { return ; }
   ofile_<<"> "<<chunk_name_ ;
   if (chunk_flavor_!="")
@@ -364,28 +382,28 @@ void ChunksFile::chunk_write()
   ofile_<<std::endl ;
 
   // colonnes avec largeurs
-  for ( auto colonne : chunk_columns_ )
-   { (*this)<<colonne ; }
+  for ( auto column : chunk_columns_ )
+   { (*this)<<column ; }
   (*this).write_next_line() ;
  }
 
 void ChunksFile::remove_format()
  {
-  if ( (option_!="WRITE") || ! ready_for_writing() )
+  if ( (mode_!=Mode::WRITE) || ! ready_for_writing() )
    { return ; }
   widths_.clear() ;
  }
 
 void ChunksFile::change_format( const std::vector<std::size_t> & largeurs )
  {
-  if ( (option_!="WRITE") || ! ready_for_writing() )
+  if ( (mode_!=Mode::WRITE) || ! ready_for_writing() )
    { return ; }
   widths_ = largeurs ;
  }
 
 void ChunksFile::write_next_line()
  {
-  if ( (option_!="WRITE") || ! ready_for_writing() )
+  if ( (mode_!=Mode::WRITE) || ! ready_for_writing() )
    { return ; }
   ofile_<<std::endl ;
   current_indice_ = 0 ;

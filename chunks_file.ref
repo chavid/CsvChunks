@@ -1,163 +1,119 @@
 open in read mode: chunks_file.in.csv
-First element : STRING = DUMMY
+STRING = DUMMY
+PATHS = examinateurs.csv ../input/entrees.csv
+DATE = 2019/06/17
+BOOLEAN = 0
+INTEGERS = 1 2 3
 open in read mode: chunks_file.in.csv
-First element : STRING = DUMMY
+STRING = DUMMY
+PATHS = examinateurs.csv ../input/entrees.csv
+DATE = 2019/06/17
+BOOLEAN = 0
+INTEGERS = 1 2 3
 open in read mode: chunks_file.in.csv
-mppc4 mpc1 4009 JOSEPHINE(Melanie) non oui non AN  PH FR 
-mppc4 mpc1 4405 BENECH(Laurie) non oui non AN CH PH FR 
-mppc4 mpc1 4504 BAIN(Manon) non oui non AN  MA FR 
-mppc4 mpc1 4517 MONIER(Oceane) non oui non AR  MA FR 
-mppc4 mpc1 4547 GASCHET(Ilona) non oui non AN  PH FR 
-mppc4 mpc1 4610 GERAUD(Dylan) non oui non AN AL PH FR 
-mppc4 mpc1 4644 MORIN(Cedric) non oui non AN  PH FR 
-mppc4 mpc1 4647 CHAZAL(Aurelie) non oui non AN ES MA FR 
-mppc4 mpc1 4661 GRAF(Francois) non oui non ES AN MA FR 
-mppc4 mpc2 4092 CHEREAU(Elodie) non oui non CH AN MA FR 
-mppc4 mpc2 4108 SIMEON(Alice) non oui non AL AN PH FR 
-mppc4 mpc2 4113 CHABANON(Alexis) non oui non AN AL MA FR 
-mppc4 mpc2 4118 MORON(Loic) non oui non AN ES PH FR 
-mppc4 mpc2 4119 MOSCA(Corentin) non oui non AN  MA FR 
-mppc4 mpc2 4174 ELISABETH(Alexandre) non oui non AN AL PH FR 
-mppc4 mpc3 4063 UGUEN(Anna) non oui non AR AN PH FR 
-mppc1 mpc3 4076 LELEU(Simon) non oui non AN AL MA FR 
-mppc4 mpc3 4079 BOUTIGNY(Matthieu) non oui non AN AL PH FR 
-mppc4 mpc3 4085 CHATELIN(Sophie) non oui non AN  MA FR 
-mppc4 mpc3 4302 PAQUEREAU(Samuel) non oui non AN  PH FR 
-mppc4 mpc3 4312 CHASSIN(Lisa) non oui non AN ES MA FR 
-mppc4 mpc3 4331 RICARD(Julia) non oui non AN  PH FR 
-mppc4 mpc3 4352 LABELLE(Gabriel) non oui non AN AL PH FR 
-mppc4 mpc3 4373 BERNA(Clara) non oui non AR AN MA FR 
-mppc4 mpc3 4389 NOYER(Eloise) non oui non AN  MA FR 
-mppc4 mpc3 4423 POIZAT(Thibault) non oui non AN ES PH FR 
-mppc4 mpc3 4440 FREULON(Damien) non oui non ES  MA FR 
-mppc4 mpc3 4459 PERRAUD(Mael) non oui non AN AL PH FR 
-mppc4 pcc1 8088 PLA(Benjamin) non non oui AL AN PH FR 
-mppc4 pcc1 8098 SANTOS(Kenza) non oui oui AN  PH FR 
-mppc4 pcc1 8213 BERARD(Maxence) non non oui AN AR CH FR 
-mppc4 pcc1 8214 LE(Aurore) non non oui ES AN PH FR 
-mppc4 pcc1 8226 FARDEAU(Theo) non oui oui AN  CH FR 
-mppc4 pcc1 8250 VASSELIN(Jeanne) non non oui AN IT CH FR 
-mppc4 pcc1 8298 ANGLES(Ludovic) non non oui AN  CH FR 
-mppc4 pcc1 8303 CECCALDI(Sofiane) non non oui AN ES PH FR 
-mppc4 pcc1 8339 NICOLLET(Romane) non oui oui AN  PH FR 
-mppc4 pcc1 8438 SARRE(Pierre) non oui oui AL AN PH FR 
-mppc4 pcc1 8440 DUMONTIER(Claire) non non oui AN  CH FR 
-mppc4 pcc2 8019 GRANGER(Myriam) non oui oui AN  PH FR 
-mppc4 pcc2 8129 NADAL(Laetitia) non oui oui AN ES PH FR 
-mppc4 pcc2 8131 LAPEYRE(Bastien) non oui oui AL AN CH FR 
-mppc4 pcc2 8138 AMAND(Adam) non non oui AN  CH FR 
-mppc4 pcc2 8174 HEDOUIN(Thomas) non non oui AN  CH FR 
-mppc4 pcc2 8176 SANNA(Dimitri) non oui oui ES AN PH FR 
-mppc4 pcc2 8241 NOUHAUD(Valentin) non oui oui AR AN PH FR 
-mppc3 pcc2 8269 TOUDIC(Maelle) non non oui AN AL PH FR 
-mppc4 pcc2 8281 BACH(Marina) non non oui AN  CH FR 
-mppc4 pcc2 8290 HELIN(Kevin) non oui oui AL AN CH FR 
-mppc4 pcc2 8325 PLANCHE(Clementine) non non oui AN  PH FR 
-mppc4 pcc2 8326 COTTEREAU(Tristan) non non oui AN ES CH FR 
-mppc4 pcc3 8063 SOULA(Morgane) non oui oui AL AN CH FR 
-mppc4 pcc3 8083 TALLEC(Laure) non oui oui AN ES PH FR 
-mppc4 pcc3 8095 BACHELET(Valentine) non non oui AN  PH FR 
-mppc4 pcc3 8110 DUCREUX(Charles) non oui oui AN  CH FR 
-mppc4 pcc3 8116 RAMOND(Maxime) non oui oui AL AN PH FR 
-mppc4 pcc3 8128 BOURDIER(Mathis) non non oui AN AL PH FR 
-mppc4 pcc3 8353 QUENTIN(Charline) non oui oui AN  CH FR 
-mppc4 pcc3 8357 BARON(Lucie) non non oui AN ES CH FR 
-mppc4 pcc3 8412 BALLAY(Laura) non oui oui AL AN PH FR 
-mppc4 pcc3 8428 LE(Alexandra) non oui oui AN ES PH FR 
-mppc4 mpens 2496 LOPEZ(Elisa) non 2496 AN    
-mppc4 mpens 2670 GRIFFON(Quentin) non 2670 AN    
-mppc4 mpens 2516 PLAS(Eva) non 2516 AN    
-mppc4 mpens 2096 HAUET(Charlotte) 1/6 2096 AN    
-mppc4 mpens 2367 CAGNON(Enzo) non 2367 AN    
-mppc4 mpens 2248 WENDLING(Jonathan) non 2248 AN    
-mppc4 mpens 2074 FOURNIE(Mathilde) non 2074 AN    
-mppc4 mpens 2718 BERTHOD(Lola) non 2718 AN    
-mppc4 mpens 2152 ARNAUD(Julie) non 2152 AR    
-mppc4 mpens 2506 RICHE(Etienne) non 2506 ES    
-mppc4 mpens 3082 MASSICOT(Adrien) non 3082 AR    
-mppc4 pcens 912039 CLERET(Robin) non 12039 AL    
-mppc4 pcens 902148 COURTEL(Anaelle) 1/3 02148 AN    
-mppc4 pcens 919179 GAROT(Ludivine) non 19179 AN    
-mppc4 pcens 922113 REBOUX(Emeline) non 22113 AN    
-mppc4 pcens 942510 DORMOY(Mehdi) non 42510 AN    
-mppc4 pcens 945224 TERRISSE(Laurine) non 45224 AN    
+COLUMNS: 7
+4009 mpc1 NOM1(Sophie) oui AN  PH 
+4405 mpc1 NOM2(Samuel) oui AN CH PH 
+4504 mpc1 NOM3(Lisa) oui AN  MA 
+4517 mpc1 NOM4(Julia) oui AR  MA 
+4661 mpc1 NOM5(Gabriel) oui ES AN MA 
+4092 mpc2 NOM6(Clara) oui CH AN MA 
+4108 mpc2 NOM7(Eloise) oui AL AN PH 
+4113 mpc2 NOM8(Thibault) oui AN AL MA 
+4118 mpc2 NOM9(Damien) oui AN ES PH 
+4119 mpc2 NOM10(Mael) oui AN  MA 
+4174 mpc2 NOM11(Benjamin) oui AN AL PH 
+4063 mpc3 NOM12(Kenza) oui AR AN PH 
+4076 mpc3 NOM13(Maxence) oui AN AL MA 
+4079 mpc3 NOM14(Aurore) oui AN AL PH 
+4085 mpc3 NOM15(Sophie) oui AN  MA 
+4302 mpc3 NOM16(Samuel) oui AN  PH 
+4312 mpc3 NOM17(Lisa) oui AN ES MA 
+4331 mpc3 NOM18(Julia) oui AN  PH 
+4352 mpc3 NOM19(Gabriel) oui AN AL PH 
+4373 mpc3 NOM20(Clara) oui AR AN MA 
+4389 mpc3 NOM21(Eloise) oui AN  MA 
+4423 mpc3 NOM22(Thibault) oui AN ES PH 
+4440 mpc3 NOM23(Damien) oui ES  MA 
+4459 mpc3 NOM24(Mael) oui AN AL PH 
+8088 pcc1 NOM25(Benjamin) non AL AN PH 
+8098 pcc1 NOM26(Kenza) oui AN  PH 
+8213 pcc1 NOM27(Maxence) non AN AR CH 
+8214 pcc1 NOM28(Aurore) non ES AN PH 
+8226 pcc1 NOM29(Theo) oui AN  CH 
+8019 pcc2 NOM30(Myriam) oui AN  PH 
+8129 pcc2 NOM31(Laetitia) oui AN ES PH 
+8131 pcc2 NOM32(Bastien) oui AL AN CH 
+8138 pcc2 NOM33(Adam) non AN  CH 
+8174 pcc2 NOM34(Thomas) non AN  CH 
+8176 pcc2 NOM35(Dimitri) oui ES AN PH 
+8241 pcc2 NOM36(Valentin) oui AR AN PH 
+8269 pcc2 NOM37(Maelle) non AN AL PH 
+8116 pcc3 NOM38(Maxime) oui AL AN PH 
+8128 pcc3 NOM39(Mathis) non AN AL PH 
+8353 pcc3 NOM40(Charline) oui AN  CH 
+8357 pcc3 NOM41(Lucie) non AN ES CH 
+8412 pcc3 NOM42(Laura) oui AL AN PH 
+8428 pcc3 NOM43(Alexandra) oui AN ES PH 
+COLUMNS: 5
+mpens NOM1(Prenom2) non 2496 AN   
+mpens NOM2(Prenom1) non 2670 AN   
+mpens NOM3(Prenom4) non 2516 AN   
+mpens NOM4(Prenom3) 1/6 2096 AN   
+mpens NOM5(Prenom1) non 2367 AN   
+pcens NOM6(Prenom6) non 12039 AL   
+pcens NOM7(Prenom5) 1/3 02148 AN   
 open in write mode: chunks_file.out.csv
 open in read mode: chunks_file.out.csv
-mppc4 mpc1 4009 JOSEPHINE(Melanie) non oui non AN  PH FR 
-mppc4 mpc1 4405 BENECH(Laurie) non oui non AN CH PH FR 
-mppc4 mpc1 4504 BAIN(Manon) non oui non AN  MA FR 
-mppc4 mpc1 4517 MONIER(Oceane) non oui non AR  MA FR 
-mppc4 mpc1 4547 GASCHET(Ilona) non oui non AN  PH FR 
-mppc4 mpc1 4610 GERAUD(Dylan) non oui non AN AL PH FR 
-mppc4 mpc1 4644 MORIN(Cedric) non oui non AN  PH FR 
-mppc4 mpc1 4647 CHAZAL(Aurelie) non oui non AN ES MA FR 
-mppc4 mpc1 4661 GRAF(Francois) non oui non ES AN MA FR 
-mppc4 mpc2 4092 CHEREAU(Elodie) non oui non CH AN MA FR 
-mppc4 mpc2 4108 SIMEON(Alice) non oui non AL AN PH FR 
-mppc4 mpc2 4113 CHABANON(Alexis) non oui non AN AL MA FR 
-mppc4 mpc2 4118 MORON(Loic) non oui non AN ES PH FR 
-mppc4 mpc2 4119 MOSCA(Corentin) non oui non AN  MA FR 
-mppc4 mpc2 4174 ELISABETH(Alexandre) non oui non AN AL PH FR 
-mppc4 mpc3 4063 UGUEN(Anna) non oui non AR AN PH FR 
-mppc1 mpc3 4076 LELEU(Simon) non oui non AN AL MA FR 
-mppc4 mpc3 4079 BOUTIGNY(Matthieu) non oui non AN AL PH FR 
-mppc4 mpc3 4085 CHATELIN(Sophie) non oui non AN  MA FR 
-mppc4 mpc3 4302 PAQUEREAU(Samuel) non oui non AN  PH FR 
-mppc4 mpc3 4312 CHASSIN(Lisa) non oui non AN ES MA FR 
-mppc4 mpc3 4331 RICARD(Julia) non oui non AN  PH FR 
-mppc4 mpc3 4352 LABELLE(Gabriel) non oui non AN AL PH FR 
-mppc4 mpc3 4373 BERNA(Clara) non oui non AR AN MA FR 
-mppc4 mpc3 4389 NOYER(Eloise) non oui non AN  MA FR 
-mppc4 mpc3 4423 POIZAT(Thibault) non oui non AN ES PH FR 
-mppc4 mpc3 4440 FREULON(Damien) non oui non ES  MA FR 
-mppc4 mpc3 4459 PERRAUD(Mael) non oui non AN AL PH FR 
-mppc4 pcc1 8088 PLA(Benjamin) non non oui AL AN PH FR 
-mppc4 pcc1 8098 SANTOS(Kenza) non oui oui AN  PH FR 
-mppc4 pcc1 8213 BERARD(Maxence) non non oui AN AR CH FR 
-mppc4 pcc1 8214 LE(Aurore) non non oui ES AN PH FR 
-mppc4 pcc1 8226 FARDEAU(Theo) non oui oui AN  CH FR 
-mppc4 pcc1 8250 VASSELIN(Jeanne) non non oui AN IT CH FR 
-mppc4 pcc1 8298 ANGLES(Ludovic) non non oui AN  CH FR 
-mppc4 pcc1 8303 CECCALDI(Sofiane) non non oui AN ES PH FR 
-mppc4 pcc1 8339 NICOLLET(Romane) non oui oui AN  PH FR 
-mppc4 pcc1 8438 SARRE(Pierre) non oui oui AL AN PH FR 
-mppc4 pcc1 8440 DUMONTIER(Claire) non non oui AN  CH FR 
-mppc4 pcc2 8019 GRANGER(Myriam) non oui oui AN  PH FR 
-mppc4 pcc2 8129 NADAL(Laetitia) non oui oui AN ES PH FR 
-mppc4 pcc2 8131 LAPEYRE(Bastien) non oui oui AL AN CH FR 
-mppc4 pcc2 8138 AMAND(Adam) non non oui AN  CH FR 
-mppc4 pcc2 8174 HEDOUIN(Thomas) non non oui AN  CH FR 
-mppc4 pcc2 8176 SANNA(Dimitri) non oui oui ES AN PH FR 
-mppc4 pcc2 8241 NOUHAUD(Valentin) non oui oui AR AN PH FR 
-mppc3 pcc2 8269 TOUDIC(Maelle) non non oui AN AL PH FR 
-mppc4 pcc2 8281 BACH(Marina) non non oui AN  CH FR 
-mppc4 pcc2 8290 HELIN(Kevin) non oui oui AL AN CH FR 
-mppc4 pcc2 8325 PLANCHE(Clementine) non non oui AN  PH FR 
-mppc4 pcc2 8326 COTTEREAU(Tristan) non non oui AN ES CH FR 
-mppc4 pcc3 8063 SOULA(Morgane) non oui oui AL AN CH FR 
-mppc4 pcc3 8083 TALLEC(Laure) non oui oui AN ES PH FR 
-mppc4 pcc3 8095 BACHELET(Valentine) non non oui AN  PH FR 
-mppc4 pcc3 8110 DUCREUX(Charles) non oui oui AN  CH FR 
-mppc4 pcc3 8116 RAMOND(Maxime) non oui oui AL AN PH FR 
-mppc4 pcc3 8128 BOURDIER(Mathis) non non oui AN AL PH FR 
-mppc4 pcc3 8353 QUENTIN(Charline) non oui oui AN  CH FR 
-mppc4 pcc3 8357 BARON(Lucie) non non oui AN ES CH FR 
-mppc4 pcc3 8412 BALLAY(Laura) non oui oui AL AN PH FR 
-mppc4 pcc3 8428 LE(Alexandra) non oui oui AN ES PH FR 
-mppc4 mpens 2496 LOPEZ(Elisa) non 2496 AN    
-mppc4 mpens 2670 GRIFFON(Quentin) non 2670 AN    
-mppc4 mpens 2516 PLAS(Eva) non 2516 AN    
-mppc4 mpens 2096 HAUET(Charlotte) 1/6 2096 AN    
-mppc4 mpens 2367 CAGNON(Enzo) non 2367 AN    
-mppc4 mpens 2248 WENDLING(Jonathan) non 2248 AN    
-mppc4 mpens 2074 FOURNIE(Mathilde) non 2074 AN    
-mppc4 mpens 2718 BERTHOD(Lola) non 2718 AN    
-mppc4 mpens 2152 ARNAUD(Julie) non 2152 AR    
-mppc4 mpens 2506 RICHE(Etienne) non 2506 ES    
-mppc4 mpens 3082 MASSICOT(Adrien) non 3082 AR    
-mppc4 pcens 912039 CLERET(Robin) non 12039 AL    
-mppc4 pcens 902148 COURTEL(Anaelle) 1/3 02148 AN    
-mppc4 pcens 919179 GAROT(Ludivine) non 19179 AN    
-mppc4 pcens 922113 REBOUX(Emeline) non 22113 AN    
-mppc4 pcens 942510 DORMOY(Mehdi) non 42510 AN    
-mppc4 pcens 945224 TERRISSE(Laurine) non 45224 AN
+COLUMNS: 7
+4009 mpc1 NOM1(Sophie) oui AN  PH 
+4405 mpc1 NOM2(Samuel) oui AN CH PH 
+4504 mpc1 NOM3(Lisa) oui AN  MA 
+4517 mpc1 NOM4(Julia) oui AR  MA 
+4661 mpc1 NOM5(Gabriel) oui ES AN MA 
+4092 mpc2 NOM6(Clara) oui CH AN MA 
+4108 mpc2 NOM7(Eloise) oui AL AN PH 
+4113 mpc2 NOM8(Thibault) oui AN AL MA 
+4118 mpc2 NOM9(Damien) oui AN ES PH 
+4119 mpc2 NOM10(Mael) oui AN  MA 
+4174 mpc2 NOM11(Benjamin) oui AN AL PH 
+4063 mpc3 NOM12(Kenza) oui AR AN PH 
+4076 mpc3 NOM13(Maxence) oui AN AL MA 
+4079 mpc3 NOM14(Aurore) oui AN AL PH 
+4085 mpc3 NOM15(Sophie) oui AN  MA 
+4302 mpc3 NOM16(Samuel) oui AN  PH 
+4312 mpc3 NOM17(Lisa) oui AN ES MA 
+4331 mpc3 NOM18(Julia) oui AN  PH 
+4352 mpc3 NOM19(Gabriel) oui AN AL PH 
+4373 mpc3 NOM20(Clara) oui AR AN MA 
+4389 mpc3 NOM21(Eloise) oui AN  MA 
+4423 mpc3 NOM22(Thibault) oui AN ES PH 
+4440 mpc3 NOM23(Damien) oui ES  MA 
+4459 mpc3 NOM24(Mael) oui AN AL PH 
+8088 pcc1 NOM25(Benjamin) non AL AN PH 
+8098 pcc1 NOM26(Kenza) oui AN  PH 
+8213 pcc1 NOM27(Maxence) non AN AR CH 
+8214 pcc1 NOM28(Aurore) non ES AN PH 
+8226 pcc1 NOM29(Theo) oui AN  CH 
+8019 pcc2 NOM30(Myriam) oui AN  PH 
+8129 pcc2 NOM31(Laetitia) oui AN ES PH 
+8131 pcc2 NOM32(Bastien) oui AL AN CH 
+8138 pcc2 NOM33(Adam) non AN  CH 
+8174 pcc2 NOM34(Thomas) non AN  CH 
+8176 pcc2 NOM35(Dimitri) oui ES AN PH 
+8241 pcc2 NOM36(Valentin) oui AR AN PH 
+8269 pcc2 NOM37(Maelle) non AN AL PH 
+8116 pcc3 NOM38(Maxime) oui AL AN PH 
+8128 pcc3 NOM39(Mathis) non AN AL PH 
+8353 pcc3 NOM40(Charline) oui AN  CH 
+8357 pcc3 NOM41(Lucie) non AN ES CH 
+8412 pcc3 NOM42(Laura) oui AL AN PH 
+8428 pcc3 NOM43(Alexandra) oui AN ES PH 
+COLUMNS: 5
+mpens NOM1(Prenom2) non 2496 AN   
+mpens NOM2(Prenom1) non 2670 AN   
+mpens NOM3(Prenom4) non 2516 AN   
+mpens NOM4(Prenom3) 1/6 2096 AN   
+mpens NOM5(Prenom1) non 2367 AN   
+pcens NOM6(Prenom6) non 12039 AL   
+pcens NOM7(Prenom5) 1/3 02148 AN

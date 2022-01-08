@@ -32,6 +32,18 @@ class Strings
     static Collection strings_ ;
  } ;
 
-std::ostream & operator<<( std::ostream & os, Strings::Rank rank ) ;
+using FrequentString = Strings::Rank ;
+
+FrequentString make_string( std::string_view ) ;
+FrequentString operator"" _fq ( const char * str, std::size_t ) ;
+
+std::ostream & operator<<( std::ostream & os, FrequentString ) ;
+
+
+namespace std
+ {
+   bool empty( FrequentString ) ;
+   std::string::size_type size( FrequentString ) ;
+ }
 
 #endif

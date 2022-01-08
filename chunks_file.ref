@@ -11,109 +11,105 @@ DATE = 2019/06/17
 BOOLEAN = 0
 INTEGERS = 1 2 3
 open in read mode: chunks_file.in.csv
-COLUMNS: 7
-4009 mpc1 NOM1(Sophie) oui AN  PH 
-4405 mpc1 NOM2(Samuel) oui AN CH PH 
-4504 mpc1 NOM3(Lisa) oui AN  MA 
-4517 mpc1 NOM4(Julia) oui AR  MA 
-4661 mpc1 NOM5(Gabriel) oui ES AN MA 
-4092 mpc2 NOM6(Clara) oui CH AN MA 
-4108 mpc2 NOM7(Eloise) oui AL AN PH 
-4113 mpc2 NOM8(Thibault) oui AN AL MA 
-4118 mpc2 NOM9(Damien) oui AN ES PH 
-4119 mpc2 NOM10(Mael) oui AN  MA 
-4174 mpc2 NOM11(Benjamin) oui AN AL PH 
-4063 mpc3 NOM12(Kenza) oui AR AN PH 
-4076 mpc3 NOM13(Maxence) oui AN AL MA 
-4079 mpc3 NOM14(Aurore) oui AN AL PH 
-4085 mpc3 NOM15(Sophie) oui AN  MA 
-4302 mpc3 NOM16(Samuel) oui AN  PH 
-4312 mpc3 NOM17(Lisa) oui AN ES MA 
-4331 mpc3 NOM18(Julia) oui AN  PH 
-4352 mpc3 NOM19(Gabriel) oui AN AL PH 
-4373 mpc3 NOM20(Clara) oui AR AN MA 
-4389 mpc3 NOM21(Eloise) oui AN  MA 
-4423 mpc3 NOM22(Thibault) oui AN ES PH 
-4440 mpc3 NOM23(Damien) oui ES  MA 
-4459 mpc3 NOM24(Mael) oui AN AL PH 
-8088 pcc1 NOM25(Benjamin) non AL AN PH 
-8098 pcc1 NOM26(Kenza) oui AN  PH 
-8213 pcc1 NOM27(Maxence) non AN AR CH 
-8214 pcc1 NOM28(Aurore) non ES AN PH 
-8226 pcc1 NOM29(Theo) oui AN  CH 
-8019 pcc2 NOM30(Myriam) oui AN  PH 
-8129 pcc2 NOM31(Laetitia) oui AN ES PH 
-8131 pcc2 NOM32(Bastien) oui AL AN CH 
-8138 pcc2 NOM33(Adam) non AN  CH 
-8174 pcc2 NOM34(Thomas) non AN  CH 
-8176 pcc2 NOM35(Dimitri) oui ES AN PH 
-8241 pcc2 NOM36(Valentin) oui AR AN PH 
-8269 pcc2 NOM37(Maelle) non AN AL PH 
-8116 pcc3 NOM38(Maxime) oui AL AN PH 
-8128 pcc3 NOM39(Mathis) non AN AL PH 
-8353 pcc3 NOM40(Charline) oui AN  CH 
-8357 pcc3 NOM41(Lucie) non AN ES CH 
-8412 pcc3 NOM42(Laura) oui AL AN PH 
-8428 pcc3 NOM43(Alexandra) oui AN ES PH 
-COLUMNS: 5
-mpens NOM1(Prenom2) non 2496 AN   
-mpens NOM2(Prenom1) non 2670 AN   
-mpens NOM3(Prenom4) non 2516 AN   
-mpens NOM4(Prenom3) 1/6 2096 AN   
-mpens NOM5(Prenom1) non 2367 AN   
-pcens NOM6(Prenom6) non 12039 AL   
-pcens NOM7(Prenom5) 1/3 02148 AN   
+mpc1 NOM1(Sophie) 4009 oui AN  PH 
+mpc1 NOM2(Samuel) 4405 oui AN CH PH 
+mpc1 NOM3(Lisa) 4504 oui AN  MA 
+mpc1 NOM4(Julia) 4517 oui AR  MA 
+mpc1 NOM5(Gabriel) 4661 oui ES AN MA 
+mpc2 NOM6(Clara) 4092 oui CH AN MA 
+mpc2 NOM7(Eloise) 4108 oui AL AN PH 
+mpc2 NOM8(Thibault) 4113 oui AN AL MA 
+mpc2 NOM9(Damien) 4118 oui AN ES PH 
+mpc2 NOM10(Mael) 4119 oui AN  MA 
+mpc2 NOM11(Benjamin) 4174 oui AN AL PH 
+mpc3 NOM12(Kenza) 4063 oui AR AN PH 
+mpc3 NOM13(Maxence) 4076 oui AN AL MA 
+mpc3 NOM14(Aurore) 4079 oui AN AL PH 
+mpc3 NOM15(Sophie) 4085 oui AN  MA 
+mpc3 NOM16(Samuel) 4302 oui AN  PH 
+mpc3 NOM17(Lisa) 4312 oui AN ES MA 
+mpc3 NOM18(Julia) 4331 oui AN  PH 
+mpc3 NOM19(Gabriel) 4352 oui AN AL PH 
+mpc3 NOM20(Clara) 4373 oui AR AN MA 
+mpc3 NOM21(Eloise) 4389 oui AN  MA 
+mpc3 NOM22(Thibault) 4423 oui AN ES PH 
+mpc3 NOM23(Damien) 4440 oui ES  MA 
+mpc3 NOM24(Mael) 4459 oui AN AL PH 
+pcc1 NOM25(Benjamin) 8088 non AL AN PH 
+pcc1 NOM26(Kenza) 8098 oui AN  PH 
+pcc1 NOM27(Maxence) 8213 non AN AR CH 
+pcc1 NOM28(Aurore) 8214 non ES AN PH 
+pcc1 NOM29(Theo) 8226 oui AN  CH 
+pcc2 NOM30(Myriam) 8019 oui AN  PH 
+pcc2 NOM31(Laetitia) 8129 oui AN ES PH 
+pcc2 NOM32(Bastien) 8131 oui AL AN CH 
+pcc2 NOM33(Adam) 8138 non AN  CH 
+pcc2 NOM34(Thomas) 8174 non AN  CH 
+pcc2 NOM35(Dimitri) 8176 oui ES AN PH 
+pcc2 NOM36(Valentin) 8241 oui AR AN PH 
+pcc2 NOM37(Maelle) 8269 non AN AL PH 
+pcc3 NOM38(Maxime) 8116 oui AL AN PH 
+pcc3 NOM39(Mathis) 8128 non AN AL PH 
+pcc3 NOM40(Charline) 8353 oui AN  CH 
+pcc3 NOM41(Lucie) 8357 non AN ES CH 
+pcc3 NOM42(Laura) 8412 oui AL AN PH 
+pcc3 NOM43(Alexandra) 8428 oui AN ES PH 
+mpens NOM1(Prenom2) 2496 non AN 
+mpens NOM2(Prenom1) 2670 non AN 
+mpens NOM3(Prenom4) 2516 non AN 
+mpens NOM4(Prenom3) 2096 1/6 AN 
+mpens NOM5(Prenom1) 2367 non AN 
+pcens NOM6(Prenom6) 12039 non AL 
+pcens NOM7(Prenom5) 02148 1/3 AN 
 open in write mode: chunks_file.out.csv
 open in read mode: chunks_file.out.csv
-COLUMNS: 7
-4009 mpc1 NOM1(Sophie) oui AN  PH 
-4405 mpc1 NOM2(Samuel) oui AN CH PH 
-4504 mpc1 NOM3(Lisa) oui AN  MA 
-4517 mpc1 NOM4(Julia) oui AR  MA 
-4661 mpc1 NOM5(Gabriel) oui ES AN MA 
-4092 mpc2 NOM6(Clara) oui CH AN MA 
-4108 mpc2 NOM7(Eloise) oui AL AN PH 
-4113 mpc2 NOM8(Thibault) oui AN AL MA 
-4118 mpc2 NOM9(Damien) oui AN ES PH 
-4119 mpc2 NOM10(Mael) oui AN  MA 
-4174 mpc2 NOM11(Benjamin) oui AN AL PH 
-4063 mpc3 NOM12(Kenza) oui AR AN PH 
-4076 mpc3 NOM13(Maxence) oui AN AL MA 
-4079 mpc3 NOM14(Aurore) oui AN AL PH 
-4085 mpc3 NOM15(Sophie) oui AN  MA 
-4302 mpc3 NOM16(Samuel) oui AN  PH 
-4312 mpc3 NOM17(Lisa) oui AN ES MA 
-4331 mpc3 NOM18(Julia) oui AN  PH 
-4352 mpc3 NOM19(Gabriel) oui AN AL PH 
-4373 mpc3 NOM20(Clara) oui AR AN MA 
-4389 mpc3 NOM21(Eloise) oui AN  MA 
-4423 mpc3 NOM22(Thibault) oui AN ES PH 
-4440 mpc3 NOM23(Damien) oui ES  MA 
-4459 mpc3 NOM24(Mael) oui AN AL PH 
-8088 pcc1 NOM25(Benjamin) non AL AN PH 
-8098 pcc1 NOM26(Kenza) oui AN  PH 
-8213 pcc1 NOM27(Maxence) non AN AR CH 
-8214 pcc1 NOM28(Aurore) non ES AN PH 
-8226 pcc1 NOM29(Theo) oui AN  CH 
-8019 pcc2 NOM30(Myriam) oui AN  PH 
-8129 pcc2 NOM31(Laetitia) oui AN ES PH 
-8131 pcc2 NOM32(Bastien) oui AL AN CH 
-8138 pcc2 NOM33(Adam) non AN  CH 
-8174 pcc2 NOM34(Thomas) non AN  CH 
-8176 pcc2 NOM35(Dimitri) oui ES AN PH 
-8241 pcc2 NOM36(Valentin) oui AR AN PH 
-8269 pcc2 NOM37(Maelle) non AN AL PH 
-8116 pcc3 NOM38(Maxime) oui AL AN PH 
-8128 pcc3 NOM39(Mathis) non AN AL PH 
-8353 pcc3 NOM40(Charline) oui AN  CH 
-8357 pcc3 NOM41(Lucie) non AN ES CH 
-8412 pcc3 NOM42(Laura) oui AL AN PH 
-8428 pcc3 NOM43(Alexandra) oui AN ES PH 
-COLUMNS: 5
-mpens NOM1(Prenom2) non 2496 AN   
-mpens NOM2(Prenom1) non 2670 AN   
-mpens NOM3(Prenom4) non 2516 AN   
-mpens NOM4(Prenom3) 1/6 2096 AN   
-mpens NOM5(Prenom1) non 2367 AN   
-pcens NOM6(Prenom6) non 12039 AL   
-pcens NOM7(Prenom5) 1/3 02148 AN
+mpc1 NOM1(Sophie) 4009 oui AN  PH 
+mpc1 NOM2(Samuel) 4405 oui AN CH PH 
+mpc1 NOM3(Lisa) 4504 oui AN  MA 
+mpc1 NOM4(Julia) 4517 oui AR  MA 
+mpc1 NOM5(Gabriel) 4661 oui ES AN MA 
+mpc2 NOM6(Clara) 4092 oui CH AN MA 
+mpc2 NOM7(Eloise) 4108 oui AL AN PH 
+mpc2 NOM8(Thibault) 4113 oui AN AL MA 
+mpc2 NOM9(Damien) 4118 oui AN ES PH 
+mpc2 NOM10(Mael) 4119 oui AN  MA 
+mpc2 NOM11(Benjamin) 4174 oui AN AL PH 
+mpc3 NOM12(Kenza) 4063 oui AR AN PH 
+mpc3 NOM13(Maxence) 4076 oui AN AL MA 
+mpc3 NOM14(Aurore) 4079 oui AN AL PH 
+mpc3 NOM15(Sophie) 4085 oui AN  MA 
+mpc3 NOM16(Samuel) 4302 oui AN  PH 
+mpc3 NOM17(Lisa) 4312 oui AN ES MA 
+mpc3 NOM18(Julia) 4331 oui AN  PH 
+mpc3 NOM19(Gabriel) 4352 oui AN AL PH 
+mpc3 NOM20(Clara) 4373 oui AR AN MA 
+mpc3 NOM21(Eloise) 4389 oui AN  MA 
+mpc3 NOM22(Thibault) 4423 oui AN ES PH 
+mpc3 NOM23(Damien) 4440 oui ES  MA 
+mpc3 NOM24(Mael) 4459 oui AN AL PH 
+pcc1 NOM25(Benjamin) 8088 non AL AN PH 
+pcc1 NOM26(Kenza) 8098 oui AN  PH 
+pcc1 NOM27(Maxence) 8213 non AN AR CH 
+pcc1 NOM28(Aurore) 8214 non ES AN PH 
+pcc1 NOM29(Theo) 8226 oui AN  CH 
+pcc2 NOM30(Myriam) 8019 oui AN  PH 
+pcc2 NOM31(Laetitia) 8129 oui AN ES PH 
+pcc2 NOM32(Bastien) 8131 oui AL AN CH 
+pcc2 NOM33(Adam) 8138 non AN  CH 
+pcc2 NOM34(Thomas) 8174 non AN  CH 
+pcc2 NOM35(Dimitri) 8176 oui ES AN PH 
+pcc2 NOM36(Valentin) 8241 oui AR AN PH 
+pcc2 NOM37(Maelle) 8269 non AN AL PH 
+pcc3 NOM38(Maxime) 8116 oui AL AN PH 
+pcc3 NOM39(Mathis) 8128 non AN AL PH 
+pcc3 NOM40(Charline) 8353 oui AN  CH 
+pcc3 NOM41(Lucie) 8357 non AN ES CH 
+pcc3 NOM42(Laura) 8412 oui AL AN PH 
+pcc3 NOM43(Alexandra) 8428 oui AN ES PH 
+mpens NOM1(Prenom2) 2496 non AN 
+mpens NOM2(Prenom1) 2670 non AN 
+mpens NOM3(Prenom4) 2516 non AN 
+mpens NOM4(Prenom3) 2096 1/6 AN 
+mpens NOM5(Prenom1) 2367 non AN 
+pcens NOM6(Prenom6) 12039 non AL 
+pcens NOM7(Prenom5) 02148 1/3 AN

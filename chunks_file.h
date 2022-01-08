@@ -2,7 +2,9 @@
 #ifndef CHUNKS_FILE_H
 #define CHUNKS_FILE_H
 
+#include "frequent_strings.h"
 #include <string>
+#include <string_view>
 #include <vector>
 #include <fstream>
 #include <sstream>
@@ -23,21 +25,25 @@ class ChunksFile
 
     // Interface de lecture
     bool read_next_chunk() ;
-    const std::string & chunk_name() { return chunk_name_ ; }
-    const std::string & chunk_flavor() { return chunk_flavor_ ; }
-    const std::string & chunk_version() { return chunk_version_ ; }
-    const std::vector<std::string> & chunk_columns() { return chunk_columns_ ; }
-    void check_columns( const std::string & colonnes ) const ;
+    FrequentString chunk_name() { return chunk_name_ ; }
+    FrequentString chunk_flavor() { return chunk_flavor_ ; }
+    FrequentString chunk_version() { return chunk_version_ ; }
+    const std::vector<FrequentString> & chunk_columns() { return chunk_columns_ ; }
+    void read_columns_order( std::string_view ) ; // MUST be called after read_next_chunk()
+    void read_columns_order( const std::vector<FrequentString> & ) ; // MUST be called after read_next_chunk()
     bool read_next_line() ;
     template <typename T>
     friend ChunksFile & operator>>( ChunksFile &, T & var ) ;
 
     // Interface d'écriture
-    void chunk_name( std::string_view name ) { chunk_name_ = name ; }
-    void chunk_flavor( std::string_view flavor ) { chunk_flavor_ = flavor ; }
-    void chunk_version( std::string_view version ) { chunk_version_ = version ; }
-    void chunk_columns( const std::vector<std::string> & columns ) { chunk_columns_ = columns ; }
+    void chunk_name( std::string_view name ) { chunk_name_ = make_string(name) ; }
+    void chunk_flavor( std::string_view flavor ) { chunk_flavor_ = make_string(flavor) ; }
+    void chunk_version( std::string_view version ) { chunk_version_ = make_string(version) ; }
     void chunk_columns( std::string_view columns ) ;
+    void chunk_name( FrequentString name ) { chunk_name_ = name ; }
+    void chunk_flavor( FrequentString flavor ) { chunk_flavor_ = flavor ; }
+    void chunk_version( FrequentString version ) { chunk_version_ = version ; }
+    void chunk_columns( const std::vector<FrequentString> & columns ) { chunk_columns_ = columns ; }
     void change_format( const std::vector<std::size_t> & widths ) ;
     void chunk_write() ;
     void remove_format() ;
@@ -54,10 +60,10 @@ class ChunksFile
     Mode mode_ { Mode::UNDEFINED } ;
 
     // section courante
-    std::string chunk_name_ ;
-    std::string chunk_flavor_ ;
-    std::string chunk_version_ ;
-    std::vector<std::string> chunk_columns_ ;
+    FrequentString chunk_name_ ;
+    FrequentString chunk_flavor_ ;
+    FrequentString chunk_version_ ;
+    std::vector<FrequentString> chunk_columns_ ;
 
     std::ofstream ofile_ ;
     std::vector<std::size_t>::size_type current_indice_ = 0 ;
@@ -67,6 +73,7 @@ class ChunksFile
     std::istringstream iline_ ;
     bool iline_ready_ = false ;
     std::vector<std::string> icells_ ;
+    std::vector<std::vector<std::string>::size_type> iorder_ ;
     std::string * pcell_ ;
     bool is_eol_ ;
     bool is_eof_ ;
@@ -88,7 +95,7 @@ ChunksFile & operator>>( ChunksFile & ft, T & var )
  {
   if (ft.prepare_extraction())
    {
-    std::istringstream iss(ft.icells_[ft.current_indice_]) ;
+    std::istringstream iss(*ft.pcell_) ;
     iss>>var ;
    }
   return ft ;

@@ -21,10 +21,10 @@ void read_lines
 
 struct Chunk
  {
-  std::string name ;
-  std::string flavor ;
-  std::string version ;
-  std::vector<std::string> columns ;
+  FrequentString name ;
+  FrequentString flavor ;
+  FrequentString version ;
+  std::vector<FrequentString> columns ;
   std::vector<std::size_t> widths ;
   std::vector<std::vector<std::string>> content ;
  } ;
@@ -39,16 +39,26 @@ void read_chunks
    { 
     while (finput.read_next_chunk())
      {
-      if ((finput.chunk_name()!="CANDIDATS")||(finput.chunk_version()!="v5"))
+      if ((finput.chunk_name()!=make_string("CANDIDATS"))||
+          (finput.chunk_version()!=make_string("v5")))
        { continue ; }
       Chunk chunk ;
       chunk.name = finput.chunk_name() ;
       chunk.flavor = finput.chunk_flavor() ;
       chunk.version = finput.chunk_version() ;
-      chunk.columns = finput.chunk_columns() ;
-      std::cout<<"COLUMNS: "<<chunk.columns.size()<<std::endl ;
+      if (chunk.flavor=="mppc"_fq)
+       {
+        chunk.columns.assign({ "comm"_fq, "nom"_fq, "anonymat"_fq, "adm-x"_fq, "lo"_fq, "lf"_fq, "ads"_fq, }) ;
+       }
+      else if (chunk.flavor=="ens"_fq)
+       {
+        chunk.columns.assign({ "Commission"_fq, "Nom"_fq, "Scei"_fq, "TAdd"_fq, "Lo"_fq, }) ;
+       }
+      else
+       { throw std::runtime_error("unknown flavor") ; }
       for ( auto column : chunk.columns )
-       { chunk.widths.push_back(column.size()) ; }
+       { chunk.widths.push_back(std::size(column)) ; }
+      finput.read_columns_order(chunk.columns) ;
       while (finput.read_next_line())
        {
         std::vector<std::string> line ;
@@ -138,29 +148,34 @@ int main()
 
   // reading csv chunks
   std::vector<Chunk> chunks1, chunks2 ;
-
-  read_chunks("chunks_file.in.csv",chunks1,cf) ;
-  write_chunks("chunks_file.out.csv",chunks1,cf) ;
-  read_chunks("chunks_file.out.csv",chunks2,cf) ;
-
-  if (chunks1.size()!=chunks2.size())
-   { throw std::runtime_error("Inconsistent number of chunks") ; }
-
-  std::vector<Chunk>::const_iterator itr1, itr2 ;
-  for ( itr1 = chunks1.begin(), itr2 = chunks2.begin() ;
-        itr1 != chunks1.end() ; ++itr1, ++itr2 )
+  try
    {
-    if (itr1->name!=itr2->name)
-     { throw std::runtime_error("Chunk name issue") ; }
-    if (itr1->flavor!=itr2->flavor)
-     { throw std::runtime_error("Flavor issue") ; }
-    if (itr1->version!=itr2->version)
-     { throw std::runtime_error("Version issue") ; }
-    if (itr1->columns!=itr2->columns)
-     { throw std::runtime_error("Columns issue") ; }
-    diff_content("Content issue",itr1->content,itr2->content) ;
-   }
+    read_chunks("chunks_file.in.csv",chunks1,cf) ;
+    write_chunks("chunks_file.out.csv",chunks1,cf) ;
+    read_chunks("chunks_file.out.csv",chunks2,cf) ;
 
+    if (chunks1.size()!=chunks2.size())
+     { throw std::runtime_error("Inconsistent number of chunks") ; }
+
+    std::vector<Chunk>::const_iterator itr1, itr2 ;
+    for ( itr1 = chunks1.begin(), itr2 = chunks2.begin() ;
+          itr1 != chunks1.end() ; ++itr1, ++itr2 )
+     {
+      if (itr1->name!=itr2->name)
+      { throw std::runtime_error("Chunk name issue") ; }
+      if (itr1->flavor!=itr2->flavor)
+      { throw std::runtime_error("Flavor issue") ; }
+      if (itr1->version!=itr2->version)
+      { throw std::runtime_error("Version issue") ; }
+      if (itr1->columns!=itr2->columns)
+      { throw std::runtime_error("Columns issue") ; }
+      diff_content("Content issue",itr1->content,itr2->content) ;
+     }
+   }
+  catch ( const std::exception & e )
+   {
+    std::cout<<e.what()<<std::endl ;
+   }
   return 0 ;
  }
 

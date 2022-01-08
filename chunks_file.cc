@@ -5,6 +5,7 @@
 #include <iomanip>
 #include <fstream>
 #include <stdexcept>
+#include <cassert>
 
 
 // ***********************************************************************
@@ -44,6 +45,7 @@ bool ChunksFile::open
     is_eof_ = false ;
     iline_.clear() ;
     icells_.clear() ;
+    iorder_.clear() ;
     current_indice_ = 0 ;
     pcell_ = nullptr ;
     return true ;
@@ -85,6 +87,7 @@ bool ChunksFile::close()
   ifile_.close() ;
   iline_.clear() ;
   icells_.clear() ;
+  iorder_.clear() ;
   current_indice_ = 0 ;
   pcell_ = nullptr ;
   iline_ready_ = false ;
@@ -101,12 +104,13 @@ ChunksFile::~ChunksFile()
 
 ChunksFile::operator void *()
  {
-  if ( ( !is_ok_ ) ||
-	   ( (mode_==Mode::READ) && ( (!ready_for_reading()) || eol_ ) ) ||
-       ( (mode_==Mode::WRITE) && !ready_for_writing() ) )
-   {
-	  return ((void*)0) ;
-   }
+  if
+   (
+     ( !is_ok_ ) ||
+	   ( (mode_==Mode::READ) &&  ( (!ready_for_reading()) || eol_ ) ) ||
+     ( (mode_==Mode::WRITE) && (!ready_for_writing()) )
+   )
+   { return ((void*)0) ; }
   return this ;
  }
 
@@ -130,31 +134,35 @@ bool ChunksFile::read_next_chunk()
   // la première extraction sert à éliminer le caractère de section
   // on élimine les éventuels ";" qui trainent
   std::string prompt ;
-  chunk_name_ = "" ;
-  chunk_flavor_ = "" ;
-  chunk_version_ = "" ;
+  std::string chunk_name = "" ;
+  std::string chunk_flavor = "" ;
+  std::string chunk_version = "" ;
   std::istringstream iss(icells_.front()) ;
-  iss>>prompt>>chunk_name_>>chunk_flavor_>>chunk_version_ ;
-  chunk_name_ = std::regex_replace(chunk_name_,std::regex(";*$"),"") ;
-  chunk_flavor_ = std::regex_replace(chunk_flavor_,std::regex(";*$"),"") ;
-  chunk_version_ = std::regex_replace(chunk_version_,std::regex(";*$"),"") ;
-  if (chunk_version_=="")
+  iss>>prompt>>chunk_name>>chunk_flavor>>chunk_version ;
+  if (chunk_version=="")
    {
-    chunk_version_ = chunk_flavor_ ;
-    chunk_flavor_ = "" ;
+    chunk_version = chunk_flavor ;
+    chunk_flavor = "" ;
    }
+  chunk_name_ = make_string(std::regex_replace(chunk_name,std::regex(";*$"),"")) ;
+  chunk_flavor_ = make_string(std::regex_replace(chunk_flavor,std::regex(";*$"),"")) ;
+  chunk_version_ = make_string(std::regex_replace(chunk_version,std::regex(";*$"),"")) ;
 
-  // depile les entetes de column
+  // columns titles
   chunk_columns_.clear() ;
+  icells_.clear() ;
+  iorder_.clear() ;
   if (read_next_line())
    {
     std::string column ;
     while ((*this)>>column)
     if (column.size()>0)
-     {
-      chunk_columns_.push_back(column) ;
-      column = "" ;
-     }
+     { chunk_columns_.push_back(make_string(column)) ; }
+    else
+     { throw std::runtime_error("anonymous column ?!") ; }
+    icells_.resize(chunk_columns_.size(),"") ;
+    for ( auto i = 0 ; i < icells_.size() ; ++ i )
+     { iorder_.push_back(i) ; }
     return true ;
    }
   else
@@ -181,9 +189,6 @@ bool ChunksFile::prepare_line()
 
   // extract one line
   iline_.clear() ;
-  icells_.clear() ;
-  current_indice_ = 0 ;
-  pcell_ = nullptr ;
   std::string line ;
   std::getline(ifile_,line,'\n') ;
 
@@ -260,29 +265,52 @@ bool ChunksFile::prepare_line()
   // alimente la istringstream
   iline_.str(line) ;
   iline_ready_ = true ;
-
   // pre-extract cells
-  icells_.clear() ;
   std::string cell ;
-  while (std::getline(iline_,cell,';'))
-   { icells_.push_back(std::move(cell)) ; }
+  if (std::empty(icells_))
+   {
+    while (std::getline(iline_,cell,';'))
+     { icells_.push_back(std::move(cell)) ; }
+   }
+  else
+   {
+    auto max = icells_.size() ;
+    icells_.assign(max,"") ;
+    decltype(max) i = 0 ;
+    while ((i<max)&&(std::getline(iline_,cell,';')))
+     { icells_[i++] = std::move(cell) ; }
+   }
+
   current_indice_ = 0 ;
   eol_ = false ;
   pcell_ = nullptr ;
-
   return true ;
  }
 
 bool ChunksFile::prepare_extraction()
  {
+  pcell_ = nullptr ;
   if ( (mode_!=Mode::READ) || (!ready_for_reading()))
    { return false ; }
-  else if (current_indice_>=icells_.size())
-   { eol_ = true ; return false ; }
-  else
+  else if (std::empty(iorder_)) // not in a chunk
    {
-    pcell_ = &(icells_[current_indice_++]) ;
-    return (!(pcell_->empty())) ;
+    if (current_indice_>=icells_.size())
+     { eol_ = true ; return false ; }
+    else
+     {
+      pcell_ = &(icells_[current_indice_++]) ;
+      return (!(pcell_->empty())) ;
+     }
+   }
+  else // in a chunk
+   {
+    if (current_indice_>=iorder_.size())
+     { eol_ = true ; return false ; }
+    else
+     {
+      pcell_ = &(icells_[iorder_[current_indice_++]]) ;
+      return (!(pcell_->empty())) ;
+     }
    }
  }
 
@@ -335,18 +363,48 @@ ChunksFile & operator>>< std::pair<int,int> >( ChunksFile & ft, std::pair<int,in
   return ft ;
  }
 
-void ChunksFile::check_columns( const std::string & colonnes ) const
+void ChunksFile::read_columns_order( std::string_view columns )
  {
-  std::vector<std::string> split_colonnes ;
-  std::istringstream iss(colonnes) ;
+  iorder_.clear() ;
+  std::istringstream iss{std::string{columns}} ;
   std::string column ;
   while (std::getline(iss,column,';'))
-    split_colonnes.push_back(column) ;
-  if (split_colonnes!=chunk_columns_)
    {
-    std::ostringstream oss ;
-    oss<<"[ChunksFile::verifie_colonnes] Colonnes inattendues : "<<colonnes ;
-    throw std::runtime_error(oss.str()) ;
+    auto read_column = make_string(column) ;
+    int i ;
+    for ( i = 0 ; i < chunk_columns_.size() ; ++i )
+    if (read_column==chunk_columns_[i])
+     {
+      iorder_.push_back(i) ;
+      break ;
+     }
+    if (i==chunk_columns_.size())
+     {
+      std::ostringstream oss ;
+      oss<<"[ChunksFile::read_columns_order] not found : "<<read_column ;
+      throw std::runtime_error(oss.str()) ;
+     }
+   }
+ }
+
+void ChunksFile::read_columns_order( const std::vector<FrequentString> & columns )
+ {
+  iorder_.clear() ;
+  for ( auto read_column : columns )
+   {
+    int i ;
+    for ( i = 0 ; i < chunk_columns_.size() ; ++i )
+    if (read_column==chunk_columns_[i])
+     {
+      iorder_.push_back(i) ;
+      break ;
+     }
+    if (i==chunk_columns_.size())
+     {
+      std::ostringstream oss ;
+      oss<<"[ChunksFile::read_columns_order] not found : "<<read_column ;
+      throw std::runtime_error(oss.str()) ;
+     }
    }
  }
 
@@ -362,12 +420,12 @@ void ChunksFile::chunk_columns( std::string_view columns )
   std::string_view::size_type pos2 = columns.find(';',pos1) ;
   while ( pos2 != std::string_view::npos )
    {
-    chunk_columns_.push_back(std::string(columns.substr(pos1,pos2-pos1))) ;
+    chunk_columns_.push_back(make_string(columns.substr(pos1,pos2-pos1))) ;
     pos1 = pos2+1 ;
     pos2 = columns.find(';',pos1) ;
    }
   if (pos1<columns.size())
-   { chunk_columns_.push_back(std::string(columns.substr(pos1))) ; }
+   { chunk_columns_.push_back(make_string(columns.substr(pos1))) ; }
  }
 
 void ChunksFile::chunk_write()
@@ -375,13 +433,13 @@ void ChunksFile::chunk_write()
   if ( (mode_!=Mode::WRITE) || ! ready_for_writing() )
    { return ; }
   ofile_<<"> "<<chunk_name_ ;
-  if (chunk_flavor_!="")
+  if (!std::empty(chunk_flavor_))
     ofile_<<" "<<chunk_flavor_ ;
-  if (chunk_version_!="")
+  if (!std::empty(chunk_version_))
     ofile_<<" "<<chunk_version_ ;
   ofile_<<std::endl ;
 
-  // colonnes avec largeurs
+  // columns avec largeurs
   for ( auto column : chunk_columns_ )
    { (*this)<<column ; }
   (*this).write_next_line() ;

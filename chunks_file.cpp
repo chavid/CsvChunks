@@ -39,26 +39,27 @@ void read_chunks
    { 
     while (finput.read_next_chunk())
      {
-      if ((finput.chunk_name()!=make_string("CANDIDATS"))||
-          (finput.chunk_version()!=make_string("v5")))
+      if ((finput.chunk_name()!="CANDIDATS"_fs)||
+          (finput.chunk_version()!="v5"_fs))
        { continue ; }
       Chunk chunk ;
       chunk.name = finput.chunk_name() ;
       chunk.flavor = finput.chunk_flavor() ;
       chunk.version = finput.chunk_version() ;
-      if (chunk.flavor=="mppc"_fq)
+      if (chunk.flavor=="mppc"_fs)
        {
-        chunk.columns.assign({ "comm"_fq, "nom"_fq, "anonymat"_fq, "adm-x"_fq, "lo"_fq, "lf"_fq, "ads"_fq, }) ;
+        finput.read_columns_order("comm;name|nom;anonymat;adm-x;lo;lf;ads") ;
+        chunk.columns.assign({ "comm"_fs, "nom"_fs, "anonymat"_fs, "adm-x"_fs, "lo"_fs, "lf"_fs, "ads"_fs, }) ;
        }
-      else if (chunk.flavor=="ens"_fq)
+      else if (chunk.flavor=="ens"_fs)
        {
-        chunk.columns.assign({ "Commission"_fq, "Nom"_fq, "Scei"_fq, "TAdd"_fq, "Lo"_fq, }) ;
+        finput.read_columns_order("Commission;Name|Nom;Scei;TAdd;Lo") ;
+        chunk.columns.assign({ "commission"_fs, "nom"_fs, "scei"_fs, "tadd"_fs, "lo"_fs, }) ;
        }
       else
        { throw std::runtime_error("unknown flavor") ; }
       for ( auto column : chunk.columns )
        { chunk.widths.push_back(std::size(column)) ; }
-      finput.read_columns_order(chunk.columns) ;
       while (finput.read_next_line())
        {
         std::vector<std::string> line ;

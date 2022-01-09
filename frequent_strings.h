@@ -6,6 +6,7 @@
 #include <string>
 #include <string_view>
 #include <vector>
+#include <set>
 #include <iostream>
 
 //===================================================
@@ -15,7 +16,7 @@
 // case insensitive.
 //===================================================
 
-class Strings
+class StaticStrings
  {
   public :
 
@@ -24,7 +25,7 @@ class Strings
     using Rank = StrongInt<Indice,struct StringsFoo> ;
 
     static Rank rank( std::string_view ) ;
-    static const std::string & string( Rank rank )
+    static const std::string & str( Rank rank )
      { return strings_[rank.value()] ; }
     
   private:
@@ -32,18 +33,34 @@ class Strings
     static Collection strings_ ;
  } ;
 
-using FrequentString = Strings::Rank ;
+//===================================================
+// The class FrequentString encapsulates the access
+// to the static table behind usual string behavior.
+//===================================================
 
-FrequentString make_string( std::string_view ) ;
-FrequentString operator"" _fq ( const char * str, std::size_t ) ;
+class FrequentString
+ {
+  public :
+    FrequentString() : rank_{} {}
+    FrequentString( std::string_view sv ) : rank_{ StaticStrings::rank(sv) } {}
+    bool empty() const { return (rank_==StaticStrings::Rank(0)) ; }
+    std::string const & str() const { return StaticStrings::str(rank_) ; }
+    std::string::size_type size() const { return StaticStrings::str(rank_).size() ; }
+    bool operator==( FrequentString const & other ) const { return rank_==other.rank_ ; }
+    bool operator!=( FrequentString const & other ) const { return rank_!=other.rank_ ; }
+    bool operator<( FrequentString const & other ) const { return rank_<other.rank_ ; }
+  private :
+    StaticStrings::Rank rank_ ;
+ } ;
 
+FrequentString operator"" _fs ( const char * str, std::size_t ) ;
 std::ostream & operator<<( std::ostream & os, FrequentString ) ;
 
+//===================================================
+// Other utilities
+//===================================================
 
-namespace std
- {
-   bool empty( FrequentString ) ;
-   std::string::size_type size( FrequentString ) ;
- }
+std::vector<std::set<FrequentString>> fs_parse_line( std::string_view columns ) ;
+std::vector<std::set<FrequentString>>::size_type fs_find( std::vector<std::set<FrequentString>> const & columns, std::string_view column ) ;
 
 #endif

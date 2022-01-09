@@ -6,6 +6,7 @@
 #include <string>
 #include <string_view>
 #include <vector>
+#include <set>
 #include <fstream>
 #include <sstream>
 #include <utility>
@@ -30,15 +31,14 @@ class ChunksFile
     FrequentString chunk_version() { return chunk_version_ ; }
     const std::vector<FrequentString> & chunk_columns() { return chunk_columns_ ; }
     void read_columns_order( std::string_view ) ; // MUST be called after read_next_chunk()
-    void read_columns_order( const std::vector<FrequentString> & ) ; // MUST be called after read_next_chunk()
     bool read_next_line() ;
     template <typename T>
     friend ChunksFile & operator>>( ChunksFile &, T & var ) ;
 
     // Interface d'écriture
-    void chunk_name( std::string_view name ) { chunk_name_ = make_string(name) ; }
-    void chunk_flavor( std::string_view flavor ) { chunk_flavor_ = make_string(flavor) ; }
-    void chunk_version( std::string_view version ) { chunk_version_ = make_string(version) ; }
+    void chunk_name( std::string_view name ) { chunk_name_ = FrequentString(name) ; }
+    void chunk_flavor( std::string_view flavor ) { chunk_flavor_ = FrequentString(flavor) ; }
+    void chunk_version( std::string_view version ) { chunk_version_ = FrequentString(version) ; }
     void chunk_columns( std::string_view columns ) ;
     void chunk_name( FrequentString name ) { chunk_name_ = name ; }
     void chunk_flavor( FrequentString flavor ) { chunk_flavor_ = flavor ; }

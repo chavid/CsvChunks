@@ -7,7 +7,12 @@
 #include <sstream>
 #include <algorithm>
 
-Strings::Collection Strings::strings_({"empty"}) ;
+
+//===================================================
+// StaticStrings
+//===================================================
+
+StaticStrings::Collection StaticStrings::strings_({"empty"}) ;
 
 static std::string lower( std::string_view sv )
  {
@@ -17,7 +22,7 @@ static std::string lower( std::string_view sv )
   return res ;
  }
 
-Strings::Rank Strings::rank( std::string_view sv )
+StaticStrings::Rank StaticStrings::rank( std::string_view sv )
  {
   if (sv.empty()) { return Rank(0) ; }
   std::string lower_str = lower(sv) ;
@@ -30,19 +35,44 @@ Strings::Rank Strings::rank( std::string_view sv )
   return Rank(nc) ;
  }
 
-FrequentString make_string( std::string_view str )
- { return Strings::rank(str) ; }
+//===================================================
+// FrequentString
+//===================================================
 
-FrequentString operator"" _fq ( const char * str, std::size_t )
- { return Strings::rank(str) ; }
+FrequentString operator"" _fs ( const char * str, std::size_t )
+ { return FrequentString(str) ; }
 
 std::ostream & operator<<( std::ostream & os, FrequentString str )
- { return (os<<Strings::string(str)) ; }
+ { return (os<<str.str()) ; }
 
-namespace std
+//===================================================
+// Other utilities
+//===================================================
+
+std::vector<std::set<FrequentString>> fs_parse_line( std::string_view columns )
  {
-   bool empty( FrequentString str )
-    { return (str==FrequentString(0)) ; }
-   std::string::size_type size( FrequentString str )
-    { return Strings::string(str).size() ; }
+  std::vector<std::set<FrequentString>> res1 ;
+  std::istringstream iss1{std::string{columns}} ;
+  std::string column ;
+  while (std::getline(iss1,column,';'))
+   {
+    std::set<FrequentString> res2 ;
+    std::istringstream iss2{column} ;
+    std::string alias ;
+    while (std::getline(iss2,alias,'|'))
+     { res2.insert(FrequentString{alias}) ; }
+    res1.push_back(res2) ;
+   }
+  return res1 ;
+ }
+
+std::vector<std::set<FrequentString>>::size_type fs_find( std::vector<std::set<FrequentString>> const & columns, std::string_view column )
+ {
+  std::vector<std::set<FrequentString>>::size_type res = 0 ;
+  while (res<columns.size())
+  if (columns[res].contains(column))
+   { return res ; }
+  else
+   { ++res ; }
+  return columns.size() ;
  }

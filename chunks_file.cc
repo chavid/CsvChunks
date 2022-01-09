@@ -144,9 +144,9 @@ bool ChunksFile::read_next_chunk()
     chunk_version = chunk_flavor ;
     chunk_flavor = "" ;
    }
-  chunk_name_ = make_string(std::regex_replace(chunk_name,std::regex(";*$"),"")) ;
-  chunk_flavor_ = make_string(std::regex_replace(chunk_flavor,std::regex(";*$"),"")) ;
-  chunk_version_ = make_string(std::regex_replace(chunk_version,std::regex(";*$"),"")) ;
+  chunk_name_ = FrequentString(std::regex_replace(chunk_name,std::regex(";*$"),"")) ;
+  chunk_flavor_ = FrequentString(std::regex_replace(chunk_flavor,std::regex(";*$"),"")) ;
+  chunk_version_ = FrequentString(std::regex_replace(chunk_version,std::regex(";*$"),"")) ;
 
   // columns titles
   chunk_columns_.clear() ;
@@ -157,11 +157,12 @@ bool ChunksFile::read_next_chunk()
     std::string column ;
     while ((*this)>>column)
     if (column.size()>0)
-     { chunk_columns_.push_back(make_string(column)) ; }
+     { chunk_columns_.emplace_back(column) ; }
     else
      { throw std::runtime_error("anonymous column ?!") ; }
     icells_.resize(chunk_columns_.size(),"") ;
-    for ( auto i = 0 ; i < icells_.size() ; ++ i )
+    auto imax = icells_.size() ;
+    for ( decltype(imax) i = 0 ; i < imax ; ++ i )
      { iorder_.push_back(i) ; }
     return true ;
    }
@@ -363,17 +364,16 @@ ChunksFile & operator>>< std::pair<int,int> >( ChunksFile & ft, std::pair<int,in
   return ft ;
  }
 
-void ChunksFile::read_columns_order( std::string_view columns )
+void ChunksFile::read_columns_order( std::string_view columns_sv )
  {
+  auto columns = fs_parse_line(columns_sv) ;
   iorder_.clear() ;
-  std::istringstream iss{std::string{columns}} ;
-  std::string column ;
-  while (std::getline(iss,column,';'))
+  for ( auto const & column_aliases : columns )
    {
-    auto read_column = make_string(column) ;
-    int i ;
-    for ( i = 0 ; i < chunk_columns_.size() ; ++i )
-    if (read_column==chunk_columns_[i])
+    auto imax = chunk_columns_.size() ;
+    decltype(imax) i ;
+    for ( i = 0 ; i < imax ; ++i )
+    if (column_aliases.contains(chunk_columns_[i]))
      {
       iorder_.push_back(i) ;
       break ;
@@ -381,28 +381,10 @@ void ChunksFile::read_columns_order( std::string_view columns )
     if (i==chunk_columns_.size())
      {
       std::ostringstream oss ;
-      oss<<"[ChunksFile::read_columns_order] not found : "<<read_column ;
-      throw std::runtime_error(oss.str()) ;
-     }
-   }
- }
-
-void ChunksFile::read_columns_order( const std::vector<FrequentString> & columns )
- {
-  iorder_.clear() ;
-  for ( auto read_column : columns )
-   {
-    int i ;
-    for ( i = 0 ; i < chunk_columns_.size() ; ++i )
-    if (read_column==chunk_columns_[i])
-     {
-      iorder_.push_back(i) ;
-      break ;
-     }
-    if (i==chunk_columns_.size())
-     {
-      std::ostringstream oss ;
-      oss<<"[ChunksFile::read_columns_order] not found : "<<read_column ;
+      oss<<"[ChunksFile::read_columns_order] not found :" ;
+      char delim = ' ' ;
+      for ( auto const & column : column_aliases )
+       { oss<<delim<<column ; delim = '|' ; }
       throw std::runtime_error(oss.str()) ;
      }
    }
@@ -420,12 +402,12 @@ void ChunksFile::chunk_columns( std::string_view columns )
   std::string_view::size_type pos2 = columns.find(';',pos1) ;
   while ( pos2 != std::string_view::npos )
    {
-    chunk_columns_.push_back(make_string(columns.substr(pos1,pos2-pos1))) ;
+    chunk_columns_.emplace_back(columns.substr(pos1,pos2-pos1)) ;
     pos1 = pos2+1 ;
     pos2 = columns.find(';',pos1) ;
    }
   if (pos1<columns.size())
-   { chunk_columns_.push_back(make_string(columns.substr(pos1))) ; }
+   { chunk_columns_.emplace_back(columns.substr(pos1)) ; }
  }
 
 void ChunksFile::chunk_write()

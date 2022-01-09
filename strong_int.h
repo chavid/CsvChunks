@@ -11,25 +11,37 @@
 
 
 //===================================================
+// Concept of what is allowed as StrongInt internal :
+// any integral type, or another StrongInt.
+//===================================================
+
+template <typename T>
+concept StrongIntInstance = requires( T )
+ { typename T::StrongIntInternalType ; } ;
+
+template <typename T>
+concept StrongIntInternal = std::integral<T> || StrongIntInstance<T> ;
+
+
+//===================================================
 // So to transform any index-like integer into
 // a standalone type,
 //===================================================
 
-
-template <std::integral IntegralType, typename TagType>
+template <StrongIntInternal InternalType, typename TagType>
 class StrongInt
  {
   public :
-    //using IntegralType = IntegralType ;
+    using StrongIntInternalType = InternalType ;
     StrongInt()
      : value_{}
      {}
-    explicit StrongInt( IntegralType value )
+    explicit StrongInt( InternalType value )
      : value_(value)
      {}
-    IntegralType value() const
+    InternalType value() const
      { return value_ ; }
-    IntegralType & value()
+    InternalType & value()
      { return value_ ; }
     explicit operator bool()
      { return (value_?true:false) ; }
@@ -37,33 +49,35 @@ class StrongInt
      { return value_==i.value_ ; }
     bool operator!=( const StrongInt & i ) const
      { return value_!=i.value_ ; }
+    bool operator<( const StrongInt & i ) const
+     { return value_<i.value_ ; }
   private :
-    IntegralType value_ ;
+    InternalType value_ ;
  } ;
 
 
-template <std::integral IntegralType, typename TagType>
-std::ostream & operator<<( std::ostream & os, StrongInt<IntegralType,TagType> i )
+template <StrongIntInternal InternalType, typename TagType>
+std::ostream & operator<<( std::ostream & os, StrongInt<InternalType,TagType> i )
  { return (os<<i.value()) ; }
 
-template <std::integral IntegralType, typename TagType>
-std::istream & operator>>( std::istream & is, StrongInt<IntegralType,TagType> & i )
+template <StrongIntInternal InternalType, typename TagType>
+std::istream & operator>>( std::istream & is, StrongInt<InternalType,TagType> & i )
  { return (is>>i.value()) ; }
 
-template <std::integral IntegralType, typename TagType>
-bool operator<( const StrongInt<IntegralType,TagType> & i1, const StrongInt<IntegralType,TagType> & i2 )
+template <StrongIntInternal InternalType, typename TagType>
+bool operator<( const StrongInt<InternalType,TagType> & i1, const StrongInt<InternalType,TagType> & i2 )
  { return (i1.value()<i2.value()) ; }
 
-template <std::integral IntegralType, typename TagType>
-bool operator>( const StrongInt<IntegralType,TagType> & i1, const StrongInt<IntegralType,TagType> & i2 )
+template <StrongIntInternal InternalType, typename TagType>
+bool operator>( const StrongInt<InternalType,TagType> & i1, const StrongInt<InternalType,TagType> & i2 )
  { return (i1.value()>i2.value()) ; }
 
-template <std::integral IntegralType, typename TagType>
-bool operator<=( const StrongInt<IntegralType,TagType> & i1, const StrongInt<IntegralType,TagType> & i2 )
+template <StrongIntInternal InternalType, typename TagType>
+bool operator<=( const StrongInt<InternalType,TagType> & i1, const StrongInt<InternalType,TagType> & i2 )
  { return (i1.value()<=i2.value()) ; }
 
-template <std::integral IntegralType, typename TagType>
-bool operator>=( const StrongInt<IntegralType,TagType> & i1, const StrongInt<IntegralType,TagType> & i2 )
+template <StrongIntInternal InternalType, typename TagType>
+bool operator>=( const StrongInt<InternalType,TagType> & i1, const StrongInt<InternalType,TagType> & i2 )
  { return (i1.value()>=i2.value()) ; }
 
 #endif

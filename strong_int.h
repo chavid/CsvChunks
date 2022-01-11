@@ -51,6 +51,10 @@ class StrongInt
      { return value_!=i.value_ ; }
     bool operator<( const StrongInt & i ) const
      { return value_<i.value_ ; }
+    StrongInt & operator++()
+     { value_++ ; return *this ; }
+    StrongInt operator++( int )
+     { StrongInt copy(*this) ; ++*this ; return copy ; }
   private :
     InternalType value_ ;
  } ;
@@ -79,5 +83,11 @@ bool operator<=( const StrongInt<InternalType,TagType> & i1, const StrongInt<Int
 template <StrongIntInternal InternalType, typename TagType>
 bool operator>=( const StrongInt<InternalType,TagType> & i1, const StrongInt<InternalType,TagType> & i2 )
  { return (i1.value()>=i2.value()) ; }
+
+
+//===================================================
+// So to transform any index-like integer into
+// a standalone type,
+//===================================================
 
 #endif

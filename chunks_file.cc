@@ -364,9 +364,11 @@ ChunksFile & operator>>< std::pair<int,int> >( ChunksFile & ft, std::pair<int,in
   return ft ;
  }
 
+using Columns = Glossary<struct ColumnsFoo> ;
+
 void ChunksFile::read_columns_order( std::string_view columns_sv )
  {
-  auto columns = fs_parse_line(columns_sv) ;
+  Columns columns(columns_sv) ;
   iorder_.clear() ;
   for ( auto const & column_aliases : columns )
    {

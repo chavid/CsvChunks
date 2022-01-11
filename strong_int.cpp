@@ -18,6 +18,6 @@ int main()
   std::cout<<(i2<i3)<<std::endl ;
   std::cout<<(i3<i2)<<std::endl ;
   //std::cout<<(j<=i1)<<std::endl ;
-  std::cout<<k<<std::endl ;
+  std::cout<<++k<<std::endl ;
   return 0 ;
  }

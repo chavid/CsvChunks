@@ -3,6 +3,7 @@
 #define CHUNKS_FILE_H
 
 #include "frequent_strings.h"
+#include "glossary.h"
 #include <string>
 #include <string_view>
 #include <vector>
@@ -29,7 +30,7 @@ class ChunksFile
     FrequentString chunk_name() { return chunk_name_ ; }
     FrequentString chunk_flavor() { return chunk_flavor_ ; }
     FrequentString chunk_version() { return chunk_version_ ; }
-    const std::vector<FrequentString> & chunk_columns() { return chunk_columns_ ; }
+    const std::vector<std::string> & chunk_columns() { return chunk_columns_ ; }
     void read_columns_order( std::string_view ) ; // MUST be called after read_next_chunk()
     bool read_next_line() ;
     template <typename T>
@@ -43,7 +44,7 @@ class ChunksFile
     void chunk_name( FrequentString name ) { chunk_name_ = name ; }
     void chunk_flavor( FrequentString flavor ) { chunk_flavor_ = flavor ; }
     void chunk_version( FrequentString version ) { chunk_version_ = version ; }
-    void chunk_columns( const std::vector<FrequentString> & columns ) { chunk_columns_ = columns ; }
+    void chunk_columns( const std::vector<std::string> & columns ) { chunk_columns_ = columns ; }
     void change_format( const std::vector<std::size_t> & widths ) ;
     void chunk_write() ;
     void remove_format() ;
@@ -63,7 +64,7 @@ class ChunksFile
     FrequentString chunk_name_ ;
     FrequentString chunk_flavor_ ;
     FrequentString chunk_version_ ;
-    std::vector<FrequentString> chunk_columns_ ;
+    std::vector<std::string> chunk_columns_ ;
 
     std::ofstream ofile_ ;
     std::vector<std::size_t>::size_type current_indice_ = 0 ;

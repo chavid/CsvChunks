@@ -24,7 +24,7 @@ struct Chunk
   FrequentString name ;
   FrequentString flavor ;
   FrequentString version ;
-  std::vector<FrequentString> columns ;
+  std::vector<std::string> columns ;
   std::vector<std::size_t> widths ;
   std::vector<std::vector<std::string>> content ;
  } ;
@@ -49,12 +49,12 @@ void read_chunks
       if (chunk.flavor=="mppc"_fs)
        {
         finput.read_columns_order("comm;name|nom;anonymat;adm-x;lo;lf;ads") ;
-        chunk.columns.assign({ "comm"_fs, "nom"_fs, "anonymat"_fs, "adm-x"_fs, "lo"_fs, "lf"_fs, "ads"_fs, }) ;
+        chunk.columns.assign({ "comm", "nom", "anonymat", "adm-x", "lo", "lf", "ads" }) ;
        }
       else if (chunk.flavor=="ens"_fs)
        {
         finput.read_columns_order("Commission;Name|Nom;Scei;TAdd;Lo") ;
-        chunk.columns.assign({ "commission"_fs, "nom"_fs, "scei"_fs, "tadd"_fs, "lo"_fs, }) ;
+        chunk.columns.assign({ "commission", "nom", "scei", "tadd", "lo" }) ;
        }
       else
        { throw std::runtime_error("unknown flavor") ; }

@@ -6,6 +6,7 @@ targets = [
 
     { "name" : "strong_int" , "command" : "./strong_int.exe"  },
     { "name" : "frequent_strings" , "command" : "./frequent_strings.exe"  },
+    { "name" : "glossary" , "command" : "./glossary.exe"  },
     { "name" : "chunks_file" , "command" : "./chunks_file.exe"  },
 
 ]

@@ -157,7 +157,11 @@ bool ChunksFile::read_next_chunk()
     std::string column ;
     while ((*this)>>column)
     if (column.size()>0)
-     { chunk_columns_.emplace_back(column) ; }
+     {
+      std::transform(column.begin(),column.end(),column.begin(),
+        [](unsigned char c){ return std::tolower(c) ; } ) ;
+      chunk_columns_.push_back(std::move(column)) ;
+     }
     else
      { throw std::runtime_error("anonymous column ?!") ; }
     icells_.resize(chunk_columns_.size(),"") ;
@@ -375,7 +379,7 @@ void ChunksFile::read_columns_order( std::string_view columns_sv )
     auto imax = chunk_columns_.size() ;
     decltype(imax) i ;
     for ( i = 0 ; i < imax ; ++i )
-    if (column_aliases.contains(chunk_columns_[i]))
+    if (std::find(column_aliases.begin(),column_aliases.end(),chunk_columns_[i])!=column_aliases.end())
      {
       iorder_.push_back(i) ;
       break ;

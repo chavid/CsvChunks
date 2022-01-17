@@ -24,8 +24,7 @@ concept StrongIntInternal = std::integral<T> || StrongIntInstance<T> ;
 
 
 //===================================================
-// So to transform any index-like integer into
-// a standalone type,
+// So to transform any index-like integer into a standalone type.
 //===================================================
 
 template <StrongIntInternal InternalType, typename TagType>

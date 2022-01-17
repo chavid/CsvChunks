@@ -49,7 +49,14 @@ StaticStrings::Rank StaticStrings::rank( std::string_view sv )
 FrequentString operator"" _fs ( const char * str, std::size_t )
  { return FrequentString(str) ; }
 
-std::ostream & operator<<( std::ostream & os, FrequentString str )
- { return (os<<str.str()) ; }
+std::ostream & operator<<( std::ostream & os, FrequentString fs )
+ { return (os<<fs.str()) ; }
+
+std::istream & operator>>( std::istream & is, FrequentString & fs )
+ {
+  std::string str ;
+  if (is>>str) fs = FrequentString(str) ;
+  return is ;
+ }
 
 

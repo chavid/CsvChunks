@@ -373,27 +373,10 @@ using Columns = Glossary<struct ColumnsFoo> ;
 void ChunksFile::read_columns_order( std::string_view columns_sv )
  {
   Columns columns(columns_sv) ;
-  iorder_.clear() ;
-  for ( auto const & column_aliases : columns )
-   {
-    auto imax = chunk_columns_.size() ;
-    decltype(imax) i ;
-    for ( i = 0 ; i < imax ; ++i )
-    if (std::find(column_aliases.begin(),column_aliases.end(),chunk_columns_[i])!=column_aliases.end())
-     {
-      iorder_.push_back(i) ;
-      break ;
-     }
-    if (i==chunk_columns_.size())
-     {
-      std::ostringstream oss ;
-      oss<<"[ChunksFile::read_columns_order] not found :" ;
-      char delim = ' ' ;
-      for ( auto const & column : column_aliases )
-       { oss<<delim<<column ; delim = '|' ; }
-      throw std::runtime_error(oss.str()) ;
-     }
-   }
+  std::sort(iorder_.begin(),iorder_.end(),[&]( auto i1, auto i2 )
+   { return (columns.id(chunk_columns_[i1])<columns.id(chunk_columns_[i2])) ; }) ;
+  if (iorder_.size()<columns.size())
+   { throw std::runtime_error("[ChunksFile::read_columns_order] lacking column(s)") ; }
  }
 
 

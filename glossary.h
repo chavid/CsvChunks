@@ -1,5 +1,4 @@
 
-
 #ifndef GLOSSARY_H
 #define GLOSSARY_H
 
@@ -32,6 +31,7 @@ class Glossary
 
   private:
   
+    Id find_( std::string_view ) const ;
     Collection data_ ;
 
  } ;
@@ -54,6 +54,7 @@ class Enum
 
     friend bool operator==( Enum lhs, Enum rhs ) { return (lhs.id_==rhs.id_) ; }
     friend bool operator!=( Enum lhs, Enum rhs ) { return (lhs.id_!=rhs.id_) ; }
+    friend bool operator<( Enum lhs, Enum rhs ) { return (lhs.id_<rhs.id_) ; }
 
     friend std::ostream & operator<<( std::ostream & os, Enum<TagType> e )
      { return (os<<e.glo__.str(e.id_)) ; }
@@ -72,52 +73,18 @@ class Enum
 // External implementations
 //===================================================
 
-static void glossary_lower(std::string & str)
+static void glossary_upper(std::string & str)
 {
   std::transform(str.begin(), str.end(), str.begin(),
                  [](unsigned char c)
-                 { return std::tolower(c); });
+                 { return std::toupper(c); });
 }
 
 template <typename TagType>
-Glossary<TagType>::Glossary( std::string_view terms_sv )
-{
-  std::istringstream terms_iss{std::string{terms_sv}};
-  std::string synonyms_str;
-  while (std::getline(terms_iss, synonyms_str, ';'))
-  {
-    std::vector<std::string> synonyms;
-    std::istringstream synonyms_iss{synonyms_str};
-    std::string term;
-    while (std::getline(synonyms_iss, term, '|'))
-    {
-      glossary_lower(term);
-      synonyms.push_back(std::move(term));
-    }
-    data_.push_back(std::move(synonyms));
-  }
-}
-
-template <typename TagType>
-Glossary<TagType>::Id Glossary<TagType>::add( std::string_view terms_sv )
- {
-  std::istringstream terms_iss{std::string{terms_sv}} ;
-  std::vector<std::string> terms ;
-  std::string term ;
-  while (std::getline(terms_iss,term,'|'))
-   {
-    glossary_lower(term) ;
-    terms.push_back(std::move(term)) ;
-   }
-  data_.push_back(std::move(terms)) ;
-  return (data_.size()-1) ;
- }
-
-template <typename TagType>
-Glossary<TagType>::Id Glossary<TagType>::id( std::string_view term_sv ) const
+Glossary<TagType>::Id Glossary<TagType>::find_( std::string_view term_sv ) const
  {
   std::string term_str(term_sv);
-  glossary_lower(term_str);
+  glossary_upper(term_str);
   Id res = 0;
   while (res < data_.size())
    {
@@ -127,9 +94,53 @@ Glossary<TagType>::Id Glossary<TagType>::id( std::string_view term_sv ) const
     else
      { ++res ; }
    }
-  std::ostringstream oss ;
-  oss<<"Unknown term: "<<term_sv ;
-  throw std::runtime_error(oss.str()) ;
+  return data_.size() ;
+ }
+
+template <typename TagType>
+Glossary<TagType>::Id Glossary<TagType>::add( std::string_view terms_sv )
+ {
+  // check there is no double terms
+  std::istringstream terms_iss{std::string{terms_sv}} ;
+  std::vector<std::string> terms ;
+  std::string term ;
+  while (std::getline(terms_iss,term,'|'))
+  if (find_(term)!=data_.size())
+   {
+    std::ostringstream oss ;
+    oss<<"Redundant term: "<<term ;
+    throw std::runtime_error(oss.str()) ;
+   }
+  else
+   {
+    glossary_upper(term) ;
+    terms.push_back(std::move(term)) ;
+   }
+  data_.push_back(std::move(terms)) ;
+  return (data_.size()-1) ;
+ }
+
+template <typename TagType>
+Glossary<TagType>::Glossary( std::string_view terms_sv )
+{
+  std::istringstream terms_iss{std::string{terms_sv}};
+  std::string synonyms_str;
+  while (std::getline(terms_iss, synonyms_str, ';'))
+   { add(synonyms_str) ; }
+}
+
+template <typename TagType>
+Glossary<TagType>::Id Glossary<TagType>::id( std::string_view term_sv ) const
+ {
+  Id id = find_(term_sv) ;
+  if (id < data_.size())
+   { return id ; }
+  else
+   {
+    std::ostringstream oss ;
+    oss<<"Unknown term: "<<term_sv ;
+    throw std::runtime_error(oss.str()) ;
+   }
  }
 
 

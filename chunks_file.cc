@@ -159,7 +159,7 @@ bool ChunksFile::read_next_chunk()
     if (column.size()>0)
      {
       std::transform(column.begin(),column.end(),column.begin(),
-        [](unsigned char c){ return std::tolower(c) ; } ) ;
+        [](unsigned char c){ return std::toupper(c) ; } ) ;
       chunk_columns_.push_back(std::move(column)) ;
      }
     else
@@ -304,7 +304,7 @@ bool ChunksFile::prepare_extraction()
     else
      {
       pcell_ = &(icells_[current_indice_++]) ;
-      return (!(pcell_->empty())) ;
+      return true ; //(!(pcell_->empty())) ;
      }
    }
   else // in a chunk
@@ -314,7 +314,7 @@ bool ChunksFile::prepare_extraction()
     else
      {
       pcell_ = &(icells_[iorder_[current_indice_++]]) ;
-      return (!(pcell_->empty())) ;
+      return true ; //(!(pcell_->empty())) ;
      }
    }
  }

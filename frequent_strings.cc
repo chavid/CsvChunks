@@ -19,7 +19,7 @@ std::unordered_map<std::string,StaticStrings::Rank> StaticStrings::ranks_ = { { 
 static void lower( std::string & str )
  {
   std::transform(str.begin(),str.end(),str.begin(),
-   [](unsigned char c){ return std::tolower(c) ; } ) ;
+   [](unsigned char c){ return std::toupper(c) ; } ) ;
  }
 
 StaticStrings::Rank StaticStrings::rank( std::string_view sv )

@@ -43,10 +43,13 @@ class StaticStrings
 class FrequentString
  {
   public :
+    using SSIZE = std::string::size_type ;
     FrequentString() : rank_{} {}
     explicit FrequentString( std::string_view sv ) : rank_{ StaticStrings::rank(sv) } {}
     bool empty() const { return (rank_==StaticStrings::Rank(0)) ; }
     std::string const & str() const { return StaticStrings::str(rank_) ; }
+    int compare( SSIZE pos, SSIZE count, FrequentString const & fs ) const
+     { return str().compare(pos,count,fs.str()) ; }
     std::string::size_type size() const { return StaticStrings::str(rank_).size() ; }
     bool operator==( FrequentString const & other ) const { return rank_==other.rank_ ; }
     bool operator!=( FrequentString const & other ) const { return rank_!=other.rank_ ; }

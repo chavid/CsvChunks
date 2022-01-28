@@ -16,7 +16,7 @@ StaticStrings::Collection StaticStrings::strings_({"empty"}) ;
 
 std::unordered_map<std::string,StaticStrings::Rank> StaticStrings::ranks_ = { { "empty", StaticStrings::Rank(0) } } ;
 
-static void lower( std::string & str )
+static void upper( std::string & str )
  {
   std::transform(str.begin(),str.end(),str.begin(),
    [](unsigned char c){ return std::toupper(c) ; } ) ;
@@ -26,7 +26,7 @@ StaticStrings::Rank StaticStrings::rank( std::string_view sv )
  {
   if (sv.empty()) { return Rank(0) ; }
   std::string str { sv } ;
-  lower(str) ;
+  upper(str) ;
   auto [ itr, res ] = ranks_.insert({str,StaticStrings::Rank(strings_.size())}) ;
   if (res) strings_.push_back(str) ;
   return (itr->second) ;

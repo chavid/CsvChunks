@@ -16,18 +16,18 @@
 //===================================================
 
 template <typename T>
-concept StrongIntInstance = requires( T )
+concept strong_int = requires( T )
  { typename T::StrongIntInternalType ; } ;
 
 template <typename T>
-concept StrongIntInternal = std::integral<T> || StrongIntInstance<T> ;
+concept strong_int_internal = std::integral<T> || strong_int<T> ;
 
 
 //===================================================
 // So to transform any index-like integer into a standalone type.
 //===================================================
 
-template <StrongIntInternal InternalType, typename TagType>
+template <strong_int_internal InternalType, typename TagType>
 class StrongInt
  {
   public :
@@ -59,27 +59,27 @@ class StrongInt
  } ;
 
 
-template <StrongIntInternal InternalType, typename TagType>
+template <strong_int_internal InternalType, typename TagType>
 std::ostream & operator<<( std::ostream & os, StrongInt<InternalType,TagType> i )
  { return (os<<i.value()) ; }
 
-template <StrongIntInternal InternalType, typename TagType>
+template <strong_int_internal InternalType, typename TagType>
 std::istream & operator>>( std::istream & is, StrongInt<InternalType,TagType> & i )
  { return (is>>i.value()) ; }
 
-template <StrongIntInternal InternalType, typename TagType>
+template <strong_int_internal InternalType, typename TagType>
 bool operator<( const StrongInt<InternalType,TagType> & i1, const StrongInt<InternalType,TagType> & i2 )
  { return (i1.value()<i2.value()) ; }
 
-template <StrongIntInternal InternalType, typename TagType>
+template <strong_int_internal InternalType, typename TagType>
 bool operator>( const StrongInt<InternalType,TagType> & i1, const StrongInt<InternalType,TagType> & i2 )
  { return (i1.value()>i2.value()) ; }
 
-template <StrongIntInternal InternalType, typename TagType>
+template <strong_int_internal InternalType, typename TagType>
 bool operator<=( const StrongInt<InternalType,TagType> & i1, const StrongInt<InternalType,TagType> & i2 )
  { return (i1.value()<=i2.value()) ; }
 
-template <StrongIntInternal InternalType, typename TagType>
+template <strong_int_internal InternalType, typename TagType>
 bool operator>=( const StrongInt<InternalType,TagType> & i1, const StrongInt<InternalType,TagType> & i2 )
  { return (i1.value()>=i2.value()) ; }
 

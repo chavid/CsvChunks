@@ -13,9 +13,13 @@ It should work with any compiler supporting C++20.
 
 This project is developed with the help of Docker and [this recipe](https://github.com/chavid/MyDevTools/blob/main/DevCpp20/Dockerfile). Running the provided tests rely on the [oval script](https://github.com/chavid/MyDevTools/blob/main/bin/oval.py) .
 
-
 # Conventions
 
 - `*.h` : header file
 - `*.cc` : body file
 - `*.cpp` : test file
+
+# Few design principles
+
+I use strongly typed integers and arrays, so to ensure that I never mix an index
+with the wrong array. 

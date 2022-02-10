@@ -26,7 +26,7 @@ class StaticStrings
     using Rank = StrongInt<Indice,struct StringsFoo> ;
 
     static Rank rank( std::string_view ) ;
-    static const std::string & str( Rank rank )
+    static std::string const & str( Rank rank )
      { return strings_[rank.value()] ; }
     
   private:
@@ -70,7 +70,7 @@ class FrequentString
     StaticStrings::Rank rank_ ;
  } ;
 
-FrequentString operator"" _fs ( const char * str, std::size_t ) ;
+FrequentString operator"" _fs ( char const * str, std::size_t ) ;
 std::ostream & operator<<( std::ostream & os, FrequentString ) ;
 std::istream & operator>>( std::istream & is, FrequentString & ) ;
 

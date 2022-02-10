@@ -44,11 +44,11 @@ class StrongInt
      { return value_ ; }
     explicit operator bool()
      { return (value_?true:false) ; }
-    bool operator==( const StrongInt & i ) const
+    bool operator==( StrongInt const & i ) const
      { return value_==i.value_ ; }
-    bool operator!=( const StrongInt & i ) const
+    bool operator!=( StrongInt const & i ) const
      { return value_!=i.value_ ; }
-    bool operator<( const StrongInt & i ) const
+    bool operator<( StrongInt const & i ) const
      { return value_<i.value_ ; }
     StrongInt & operator++()
      { value_++ ; return *this ; }

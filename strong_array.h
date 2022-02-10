@@ -33,7 +33,7 @@ class StrongArray1D
 
     StrongArray1D() {}
 
-    void resize( StrongInt e, const Value & v ) ;
+    void resize( StrongInt e, Value const & v ) ;
 
     Reference operator[]( StrongInt e )
      { return collection_[e.value()] ; }
@@ -57,7 +57,7 @@ class StrongArray1D
 // je commence par un clear pour m'assurer que la valeur
 // v sera diffusée dans tous les éléments
 template <strong_int TStrongInt, typename TValue>
-void StrongArray1D<TStrongInt,TValue>::resize( TStrongInt e, const TValue & v )
+void StrongArray1D<TStrongInt,TValue>::resize( TStrongInt e, TValue const & v )
  {
   collection_.clear() ;
   collection_.resize(e.value(),v) ;
@@ -85,7 +85,7 @@ class StrongArray2D
 
     StrongArray2D() ;
 
-    void resize( StrongInt1 s1, StrongInt2 s2, const Value & v ) ;
+    void resize( StrongInt1 s1, StrongInt2 s2, Value const & v ) ;
 
     Reference at( StrongInt1 e1, StrongInt2 e2 ) ;
     ConstReference at( StrongInt1 e1, StrongInt2 e2 ) const ;
@@ -103,7 +103,7 @@ StrongArray2D<TSI1,TSI2,TV>::StrongArray2D()
  {}
 
 template <strong_int TSI1, strong_int TSI2, typename TV>
-void StrongArray2D<TSI1,TSI2,TV>::resize( TSI1 s1, TSI2 s2, const TV & v )
+void StrongArray2D<TSI1,TSI2,TV>::resize( TSI1 s1, TSI2 s2, TV const & v )
  {
   s1s2_ = s1.value()*s2.value() ;
   s2_ = s2.value() ;
@@ -157,7 +157,7 @@ class StrongArray3D
 
     StrongArray3D() ;
 
-    void resize( StrongInt1 s1, StrongInt2 s2, StrongInt3 s3, const Value & v ) ;
+    void resize( StrongInt1 s1, StrongInt2 s2, StrongInt3 s3, Value const & v ) ;
 
     Reference at( StrongInt1 e1, StrongInt2 e2, StrongInt3 e3 ) ;
     ConstReference at( StrongInt1 e1, StrongInt2 e2, StrongInt3 e3 ) const ;
@@ -174,7 +174,7 @@ StrongArray3D<TSI1,TSI2,TSI3,TV>::StrongArray3D()
  {}
 
 template <strong_int TSI1, strong_int TSI2, strong_int TSI3, typename TV>
-void StrongArray3D<TSI1,TSI2,TSI3,TV>::resize( TSI1 s1, TSI2 s2, TSI3 s3, const TV & v )
+void StrongArray3D<TSI1,TSI2,TSI3,TV>::resize( TSI1 s1, TSI2 s2, TSI3 s3, TV const & v )
  {
   s1_ = s1.value() ; s2_ = s2.value() ; s3_ = s3.value() ;
   s2s3_ = s2_*s3_ ;

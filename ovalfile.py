@@ -9,6 +9,7 @@ targets = [
     { "name" : "frequent_strings" , "command" : "./frequent_strings.exe"  },
     { "name" : "glossary" , "command" : "./glossary.exe"  },
     { "name" : "chunks_file" , "command" : "./chunks_file.exe"  },
+    { "name" : "ranked_collection" , "command" : "./ranked_collection.exe"  },
 
 ]
 

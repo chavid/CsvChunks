@@ -1,5 +1,20 @@
-0 1 2 0
-1
-1
-0
-1
+i: 0 1 2
+j: 0 1 2
+k: 0 1 0
+i1 is false
+i2 is true
+i3 is true
+j1 is false
+j2 is true
+j3 is true
+k1 is false
+k2 is true
+k3 is false
+i2.value()==j2.value() : 1
+i2==i3 : 0
+k1==k3 : 1
+++k3 : 1
+k2==k3 : 1
+i2<i3 : 1
+k3<k2 : 0
+k3<=k2 : 1

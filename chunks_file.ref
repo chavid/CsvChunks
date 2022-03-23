@@ -54,13 +54,14 @@ pcc3 NOM40(Charline) 8353 oui AN  CH
 pcc3 NOM41(Lucie) 8357 non AN ES CH 
 pcc3 NOM42(Laura) 8412 oui AL AN PH 
 pcc3 NOM43(Alexandra) 8428 oui AN ES PH 
-mpens NOM1(Prenom2) 2496 non AN 
-mpens NOM2(Prenom1) 2670 non AN 
-mpens NOM3(Prenom4) 2516 non AN 
-mpens NOM4(Prenom3) 2096 oui AN 
-mpens NOM5(Prenom1) 2367 non AN 
-pcens NOM6(Prenom6) 12039 non AL 
-pcens NOM7(Prenom5) 02148 oui AN 
+WARNING: lacking column: ALGO
+mpens NOM1(Prenom2) 2496 non  AN 
+mpens NOM2(Prenom1) 2670 non  AN 
+mpens NOM3(Prenom4) 2516 non  AN 
+mpens NOM4(Prenom3) 2096 oui  AN 
+mpens NOM5(Prenom1) 2367 non  AN 
+pcens NOM6(Prenom6) 12039 non  AL 
+pcens NOM7(Prenom5) 02148 oui  AN 
 open in write mode: chunks_file.out.csv
 open in read mode: chunks_file.out.csv
 mpc1 NOM1(Sophie) 4009 oui AN  PH 
@@ -106,10 +107,10 @@ pcc3 NOM40(Charline) 8353 oui AN  CH
 pcc3 NOM41(Lucie) 8357 non AN ES CH 
 pcc3 NOM42(Laura) 8412 oui AL AN PH 
 pcc3 NOM43(Alexandra) 8428 oui AN ES PH 
-mpens NOM1(Prenom2) 2496 non AN 
-mpens NOM2(Prenom1) 2670 non AN 
-mpens NOM3(Prenom4) 2516 non AN 
-mpens NOM4(Prenom3) 2096 oui AN 
-mpens NOM5(Prenom1) 2367 non AN 
-pcens NOM6(Prenom6) 12039 non AL 
-pcens NOM7(Prenom5) 02148 oui AN
+mpens NOM1(Prenom2) 2496 non  AN 
+mpens NOM2(Prenom1) 2670 non  AN 
+mpens NOM3(Prenom4) 2516 non  AN 
+mpens NOM4(Prenom3) 2096 oui  AN 
+mpens NOM5(Prenom1) 2367 non  AN 
+pcens NOM6(Prenom6) 12039 non  AL 
+pcens NOM7(Prenom5) 02148 oui  AN

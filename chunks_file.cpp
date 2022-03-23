@@ -53,8 +53,8 @@ void read_chunks
        }
       else if (chunk.flavor=="ens"_fs)
        {
-        finput.read_columns_order("Commission;Name|Nom;Scei;TAdd;Lo") ;
-        chunk.columns.assign({ "commission", "nom", "scei", "tadd", "lo" }) ;
+        finput.read_columns_order("Commission;Name|Nom;Scei;TAdd;algo;Lo") ;
+        chunk.columns.assign({ "commission", "nom", "scei", "tadd", "algo", "lo" }) ;
        }
       else
        { throw std::runtime_error("unknown flavor") ; }

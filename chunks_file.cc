@@ -313,8 +313,14 @@ bool ChunksFile::prepare_extraction()
      { eol_ = true ; return false ; }
     else
      {
-      pcell_ = &(icells_[iorder_[current_indice_++]]) ;
-      return true ; //(!(pcell_->empty())) ;
+      auto i = iorder_[current_indice_++] ;
+      if (i<icells_.size())
+       {
+        pcell_ = &(icells_[i]) ;
+        return true ;
+       }
+      else
+       { return false ; }
      }
    }
  }
@@ -373,17 +379,29 @@ using Columns = Glossary<struct ColumnsFoo> ;
 void ChunksFile::read_columns_order( std::string_view columns_sv )
  {
   Columns columns(columns_sv) ;
-  if (iorder_.size()<columns.size())
-   { throw std::runtime_error("[ChunksFile::read_columns_order] lacking column(s)") ; }
-  std::sort(iorder_.begin(),iorder_.end(),[&]( auto i1, auto i2 )
+
+  // precompute the glossary ranks of the chunk columns
+  constexpr auto max_rank = static_cast<Columns::Id>(-1) ;
+  std::vector<Columns::Id> chunk_ranks(chunk_columns_.size()) ;
+  for ( std::size_t i = 0 ; i<chunk_columns_.size() ; ++i )
+   { chunk_ranks[i] = columns.id_opt(chunk_columns_[i]).value_or(max_rank) ; }
+
+  // detect lacking columns
+  for ( Columns::Id id = 0 ; id < columns.size() ; ++id )
+  if ( std::find(chunk_ranks.cbegin(),chunk_ranks.cend(),id) == chunk_ranks.cend() )
    {
-    constexpr auto max = static_cast<Columns::Id>(-1) ;
-    auto i1_rank = columns.id_opt(chunk_columns_[i1]).value_or(max) ;
-    auto i2_rank = columns.id_opt(chunk_columns_[i2]).value_or(max) ;
-    return (i1_rank<i2_rank) ;
-   }) ;
+    std::cout<<"WARNING: lacking column: "<<columns.str(id)<<std::endl ;
+    chunk_ranks.push_back(id) ;
+    iorder_.push_back(iorder_.back()+1) ;
+   }
+
+  // sort the indirect indexes
+  std::sort(iorder_.begin(),iorder_.end(),[&]( auto i1, auto i2 )
+   { return (chunk_ranks[i1]<chunk_ranks[i2]) ; }) ;
+
   // so to ignore unknown columns
-  iorder_.resize(columns.size()) ;
+  auto nb_unknown = std::count(chunk_ranks.cbegin(),chunk_ranks.cend(),max_rank) ;
+  iorder_.resize(iorder_.size()-nb_unknown) ;
  }
 
 

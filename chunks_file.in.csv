@@ -54,9 +54,9 @@ anonymat ; COMM ;  nom                  ; adm-x ; lo ; lf ; ads ;
 8428  ; pcc3 ; NOM43(Alexandra)        ; oui   ; AN ; ES ; PH  ;
 
 > CANDIDATS ENS v5
-commission ; name          ; tadd ; scei  ; lo ;  
+commission ; name          ; tadd ; scei  ; lo ; commentaires ; 
 mpens      ; NOM1(Prenom2) ; non  ; 2496  ; AN ;  ;  ;
-mpens      ; NOM2(Prenom1) ; non  ; 2670  ; AN ;  ;  ;
+mpens      ; NOM2(Prenom1) ; non  ; 2670  ; AN ; coucou ;  ;
 mpens      ; NOM3(Prenom4) ; non  ; 2516  ; AN ;  ;  ;
 mpens      ; NOM4(Prenom3) ; oui  ; 2096  ; AN ;  ;  ;
 mpens      ; NOM5(Prenom1) ; non  ; 2367  ; AN ;  ;  ;

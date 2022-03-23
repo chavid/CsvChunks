@@ -8,6 +8,7 @@
 #include <iostream>
 #include <sstream>
 #include <utility>
+#include <optional>
 
 
 //===================================================
@@ -22,10 +23,12 @@ class Glossary
  
     using Collection = std::vector<std::vector<std::string>> ;
     using Id = Collection::size_type ;
+    static_assert(std::is_unsigned_v<Id>) ;
   
     explicit Glossary( std::string_view = "" ) ;
     Id add( std::string_view ) ;
     Id id( std::string_view ) const ;
+    std::optional<Id> id_opt( std::string_view ) const ;
     Id size() const { return data_.size() ; }
     std::string const & str( Id id ) const { return (*(data_[id].begin())); }
 
@@ -141,6 +144,18 @@ Glossary<TagType>::Id Glossary<TagType>::id( std::string_view term_sv ) const
     oss<<"Unknown term: "<<term_sv ;
     throw std::runtime_error(oss.str()) ;
    }
+ }
+
+template <typename TagType>
+std::optional<typename Glossary<TagType>::Id> Glossary<TagType>::id_opt( std::string_view term_sv ) const
+ {
+  // when the term does not exists, we want to return the highest number,
+  // static_cast<Id>(-1)
+  Id id = find_(term_sv) ;
+  if (id < data_.size())
+   { return id ; }
+  else
+   { return {} ; }
  }
 
 

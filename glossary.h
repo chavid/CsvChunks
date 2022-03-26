@@ -10,9 +10,11 @@
 #include <utility>
 #include <optional>
 
+#include "strong_int.h"
+
 
 //===================================================
-// Glossaire
+// Glossary
 //===================================================
 
 template <typename TagType>
@@ -45,28 +47,27 @@ class Glossary
 //===================================================
 
 template <typename TagType>
-class Enum
+class Enum : public StrongInt<typename Glossary<TagType>::Id,TagType>
  {
   public :
 
     using EnumGlossary = Glossary<TagType> ;
+    using StrongBase = StrongInt<typename EnumGlossary::Id,TagType> ;
 
-    Enum() : id_(glo__.size()) {}
+    Enum() : StrongBase(glo__.size()) {}
+    Enum( StrongBase value ) : StrongBase(value) {}
     Enum( std::string_view sv, bool add = false )
-     : id_(add?glo__.add(sv):glo__.id(sv)) {}
+     : StrongBase(add?glo__.add(sv):glo__.id(sv)) {}
 
-    friend bool operator==( Enum lhs, Enum rhs ) { return (lhs.id_==rhs.id_) ; }
-    friend bool operator!=( Enum lhs, Enum rhs ) { return (lhs.id_!=rhs.id_) ; }
-    friend bool operator<( Enum lhs, Enum rhs ) { return (lhs.id_<rhs.id_) ; }
+    static StrongBase size() { return StrongBase(glo__.size()) ; } 
 
     friend std::ostream & operator<<( std::ostream & os, Enum<TagType> e )
-     { return (os<<e.glo__.str(e.id_)) ; }
+     { return (os<<e.glo__.str(e.value())) ; }
     friend std::istream & operator>>( std::istream & is, Enum<TagType> & e )
-     { std::string str ; if (is>>str) e.id_ = e.glo__.id(str) ; return is ; }
+     { std::string str ; if (is>>str) e = StrongBase(e.glo__.id(str)) ; return is ; }
 
   private :
 
-    EnumGlossary::Id id_ ;
     static EnumGlossary glo__ ;
  } ;
 

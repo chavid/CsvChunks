@@ -384,7 +384,11 @@ void ChunksFile::read_columns_order( std::string_view columns_sv )
   constexpr auto max_rank = static_cast<Columns::Id>(-1) ;
   std::vector<Columns::Id> chunk_ranks(chunk_columns_.size()) ;
   for ( std::size_t i = 0 ; i<chunk_columns_.size() ; ++i )
-   { chunk_ranks[i] = columns.id_opt(chunk_columns_[i]).value_or(max_rank) ; }
+   {
+    chunk_ranks[i] = columns.id_opt(chunk_columns_[i]).value_or(max_rank) ;
+    if (chunk_ranks[i]==max_rank)
+     { std::cout<<"WARNING: unknown column: "<<chunk_columns_[i]<<std::endl ; }
+   }
 
   // detect lacking columns
   for ( Columns::Id id = 0 ; id < columns.size() ; ++id )

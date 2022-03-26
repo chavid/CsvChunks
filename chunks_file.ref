@@ -54,6 +54,7 @@ pcc3 NOM40(Charline) 8353 oui AN  CH
 pcc3 NOM41(Lucie) 8357 non AN ES CH 
 pcc3 NOM42(Laura) 8412 oui AL AN PH 
 pcc3 NOM43(Alexandra) 8428 oui AN ES PH 
+WARNING: unknown column: COMMENTAIRES
 WARNING: lacking column: ALGO
 mpens NOM1(Prenom2) 2496 non  AN 
 mpens NOM2(Prenom1) 2670 non  AN 

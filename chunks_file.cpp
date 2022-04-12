@@ -26,7 +26,7 @@ struct Chunk
   FrequentString version ;
   std::vector<std::string> columns ;
   std::vector<std::size_t> widths ;
-  std::vector<std::vector<std::string>> content ;
+  std::vector<std::vector<FrequentString>> content ;
  } ;
 
 void read_chunks
@@ -62,13 +62,13 @@ void read_chunks
        { chunk.widths.push_back(std::size(column)) ; }
       while (finput.read_next_line())
        {
-        std::vector<std::string> line ;
+        std::vector<FrequentString> line ;
         std::string word ;
         std::size_t column = 0 ;
         while (finput>>word)
          {
           std::cout<<word<<" " ;
-          line.push_back(word) ;
+          line.push_back(FrequentString{word}) ;
           if ((column<chunk.widths.size())&&(word.size()>chunk.widths[column]))
            { chunk.widths[column] = word.size() ; }
           column++ ;
@@ -89,7 +89,7 @@ void write_chunks
  )
  {
   if (foutput.open(path,ChunksFile::Mode::WRITE))
-  for ( auto chunk : chunks )
+  for ( auto const & chunk : chunks )
    {
     foutput.chunk_name(chunk.name) ;
     foutput.chunk_flavor(chunk.flavor) ;
@@ -97,10 +97,12 @@ void write_chunks
     foutput.chunk_columns(chunk.columns) ;
     foutput.change_format(chunk.widths) ;
     foutput.chunk_write() ;
-    for ( auto line : chunk.content )
+    for ( auto const & line : chunk.content )
      {
-      for ( auto word : line )
-        { foutput<<word ; }
+      for ( auto const & word : line )
+       {
+        foutput<<word ;
+       }
       foutput.write_next_line() ;
      }
     foutput.write_next_line() ;
@@ -110,8 +112,8 @@ void write_chunks
 
 void diff_line
  ( const std::string & message,
-   const std::vector<std::string> & line1,
-   const std::vector<std::string> & line2
+   const std::vector<FrequentString> & line1,
+   const std::vector<FrequentString> & line2
  )
  {
   if (line1.size()!=line2.size())
@@ -121,14 +123,18 @@ void diff_line
   for ( ; iword<iwordmax ; ++iword )
    {
     if (line1[iword]!=line2[iword])
-     { throw std::runtime_error(message) ; }
+     {
+      std::ostringstream oss ;
+      oss<<message<<": "<<line1[iword]<<" != "<<line2[iword]<<std::endl ;
+      throw std::runtime_error(oss.str()) ;
+     }
    } 
  }
 
 void diff_content
  ( const std::string & message,
-   const std::vector<std::vector<std::string>> & content1,   
-   const std::vector<std::vector<std::string>> & content2
+   const std::vector<std::vector<FrequentString>> & content1,   
+   const std::vector<std::vector<FrequentString>> & content2
  )
  {
   if (content1.size()!=content2.size())
@@ -141,6 +147,7 @@ void diff_content
 
 int main()
  {
+  StaticStrings::init() ;
   ChunksFile cf(true) ;
 
   // reading an re-reading a name/value list
@@ -177,6 +184,7 @@ int main()
    {
     std::cout<<e.what()<<std::endl ;
    }
+  std::cout<<"static strings size: "<<StaticStrings::size()<<std::endl ;
   return 0 ;
  }
 

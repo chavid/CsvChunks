@@ -7,6 +7,8 @@
 
 int main()
  {
+  StaticStrings::init() ;
+
   std::string s1 {"COLOR1"} ;
   FrequentString fs1(s1) ;
 

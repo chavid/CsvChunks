@@ -180,7 +180,7 @@ bool ChunksFile::read_next_line()
   if ( ( !prepare_line() ) ||
        ( (!std::empty(icells_.front())) && ( icells_.front().front()=='>' ) ) )
    { return false ; }
-  // marque que la line a été prise en compte
+  // marque que la ligne a été prise en compte
   iline_ready_ = false ;
   return true ;
  }
@@ -340,9 +340,9 @@ ChunksFile & operator>>< bool >( ChunksFile & ft, bool & var )
    { return ft ; }
   if ((*ft.pcell_).empty())
    { return ft ; }
-  if (((*ft.pcell_)=="oui")||((*ft.pcell_)=="O")||((*ft.pcell_)=="yes")||((*ft.pcell_)=="Y"))
+  if (((*ft.pcell_)=="oui")||((*ft.pcell_)=="O")||((*ft.pcell_)=="o")||((*ft.pcell_)=="yes")||((*ft.pcell_)=="Y"))
    { var = true ; }
-  else if (((*ft.pcell_)=="non")||((*ft.pcell_)=="no")||((*ft.pcell_)=="N"))
+  else if (((*ft.pcell_)=="non")||((*ft.pcell_)=="no")||((*ft.pcell_)=="N")||((*ft.pcell_)=="n"))
    { var = false ; }
   else
    {

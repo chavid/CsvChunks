@@ -46,10 +46,10 @@ class StrongInt
      { return (value_?true:false) ; }
     bool operator==( StrongInt const & i ) const
      { return value_==i.value_ ; }
-    bool operator!=( StrongInt const & i ) const
-     { return value_!=i.value_ ; }
-    bool operator<( StrongInt const & i ) const
-     { return value_<i.value_ ; }
+    //bool operator!=( StrongInt const & i ) const
+    // { return value_!=i.value_ ; }
+    std::strong_ordering operator<=>( StrongInt const & i ) const
+     { return value_<=>i.value_ ; }
     StrongInt & operator++()
      { value_++ ; return *this ; }
     StrongInt operator++( int )
@@ -67,21 +67,21 @@ template <strong_int_internal InternalType, typename TagType>
 std::istream & operator>>( std::istream & is, StrongInt<InternalType,TagType> & i )
  { return (is>>i.value()) ; }
 
-template <strong_int_internal InternalType, typename TagType>
-bool operator<( const StrongInt<InternalType,TagType> & i1, const StrongInt<InternalType,TagType> & i2 )
- { return (i1.value()<i2.value()) ; }
-
-template <strong_int_internal InternalType, typename TagType>
-bool operator>( const StrongInt<InternalType,TagType> & i1, const StrongInt<InternalType,TagType> & i2 )
- { return (i1.value()>i2.value()) ; }
-
-template <strong_int_internal InternalType, typename TagType>
-bool operator<=( const StrongInt<InternalType,TagType> & i1, const StrongInt<InternalType,TagType> & i2 )
- { return (i1.value()<=i2.value()) ; }
-
-template <strong_int_internal InternalType, typename TagType>
-bool operator>=( const StrongInt<InternalType,TagType> & i1, const StrongInt<InternalType,TagType> & i2 )
- { return (i1.value()>=i2.value()) ; }
+//template <strong_int_internal InternalType, typename TagType>
+//bool operator<( const StrongInt<InternalType,TagType> & i1, const StrongInt<InternalType,TagType> & i2 )
+// { return (i1.value()<i2.value()) ; }
+//
+//template <strong_int_internal InternalType, typename TagType>
+//bool operator>( const StrongInt<InternalType,TagType> & i1, const StrongInt<InternalType,TagType> & i2 )
+// { return (i1.value()>i2.value()) ; }
+//
+//template <strong_int_internal InternalType, typename TagType>
+//bool operator<=( const StrongInt<InternalType,TagType> & i1, const StrongInt<InternalType,TagType> & i2 )
+// { return (i1.value()<=i2.value()) ; }
+//
+//template <strong_int_internal InternalType, typename TagType>
+//bool operator>=( const StrongInt<InternalType,TagType> & i1, const StrongInt<InternalType,TagType> & i2 )
+// { return (i1.value()>=i2.value()) ; }
 
 
 //===================================================

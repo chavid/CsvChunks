@@ -48,9 +48,9 @@ template <typename InternalType, typename TagType>
 std::ostream & operator<<( std::ostream & os, StrongKey<InternalType,TagType> i )
  { return (os<<i.value()) ; }
 
-//template <std::totally_ordered InternalType, typename TagType>
-//std::istream & operator>>( std::istream & is, StrongKey<InternalType,TagType> & i )
-// { return (is>>i.value()) ; }
+template <typename InternalType, typename TagType>
+std::istream & operator>>( std::istream & is, StrongKey<InternalType,TagType> & i )
+ { return (is>>i.value()) ; }
 
 //template <std::totally_ordered InternalType, typename TagType>
 //bool operator<( const StrongKey<InternalType,TagType> & i1, const StrongKey<InternalType,TagType> & i2 )

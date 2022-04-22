@@ -46,8 +46,10 @@ auto time_return( std::string_view title, Fonction&& f, ArgTypes&&... args )
 // Accumulated timing
 //=====================================================================
 
-extern std::array<std::chrono::microseconds,10> time_compteurs ;
+constexpr int NB_COMPTEURS { 10 } ;
+extern std::array<std::chrono::microseconds,NB_COMPTEURS> time_compteurs ;
 
+void time_init() ;
 void time_init( int i ) ;
 
 template< typename Fonction, typename... ArgTypes >

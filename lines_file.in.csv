@@ -1,0 +1,65 @@
+STRING = DUMMY
+PATHS = \
+  examinateurs.csv \
+  ../input/entrees.csv
+ DATE = 2019/06/17
+BOOLEAN  = 0
+# Some comment...
+INTEGERS = 1 2 3
+
+> CANDIDATS MPPC v5
+anonymat ; COMM ;  nom                  ; adm-x ; lo ; lf ; ads ;
+4009  ; mpc1 ; NOM1(Sophie)    ; oui   ; AN ;    ; PH
+4405  ; mpc1 ; NOM2(Samuel)    ; oui   ; AN ; CH ; PH  ;
+4504  ; mpc1 ; NOM3(Lisa)      ; oui   ; AN ;    ; MA  ;
+4517  ; mpc1 ; NOM4(Julia)     ; oui   ; AR ;    ; MA  ;
+4661  ; mpc1 ; NOM5(Gabriel)   ; oui   ; ES ; AN ; MA  ;
+4092  ; mpc2 ; NOM6(Clara)     ; oui   ; CH ; AN ; MA  ;
+4108  ; mpc2 ; NOM7(Eloise)    ; oui   ; AL ; AN ; PH  ;
+4113  ; mpc2 ; NOM8(Thibault)  ; oui   ; AN ; AL ; MA  ;
+4118  ; mpc2 ; NOM9(Damien)    ; oui   ; AN ; ES ; PH  ;
+4119  ; mpc2 ; NOM10(Mael)      ; oui   ; AN ;    ; MA  ;
+4174  ; mpc2 ; NOM11(Benjamin)  ; oui   ; AN ; AL ; PH  ;
+4063  ; mpc3 ; NOM12(Kenza)     ; oui   ; AR ; AN ; PH  ;
+4076  ; mpc3 ; NOM13(Maxence)   ; oui   ; AN ; AL ; MA  ;
+4079  ; mpc3 ; NOM14(Aurore)    ; oui   ; AN ; AL ; PH  ;
+4085  ; mpc3 ; NOM15(Sophie)     ; oui   ; AN ;    ; MA  ;
+4302  ; mpc3 ; NOM16(Samuel)    ; oui   ; AN ;    ; PH  ;
+4312  ; mpc3 ; NOM17(Lisa)        ; oui   ; AN ; ES ; MA  ;
+4331  ; mpc3 ; NOM18(Julia)        ; oui   ; AN ;    ; PH  ;
+4352  ; mpc3 ; NOM19(Gabriel)     ; oui   ; AN ; AL ; PH  ;
+4373  ; mpc3 ; NOM20(Clara)         ; oui   ; AR ; AN ; MA  ;
+4389  ; mpc3 ; NOM21(Eloise)        ; oui   ; AN ;    ; MA  ;
+4423  ; mpc3 ; NOM22(Thibault)     ; oui   ; AN ; ES ; PH  ;
+4440  ; mpc3 ; NOM23(Damien)      ; oui   ; ES ;    ; MA  ;
+4459  ; mpc3 ; NOM24(Mael)        ; oui   ; AN ; AL ; PH  ;
+8088  ; pcc1 ; NOM25(Benjamin)        ; non   ; AL ; AN ; PH  ;
+8098  ; pcc1 ; NOM26(Kenza)        ; oui   ; AN ;    ; PH  ;
+8213  ; pcc1 ; NOM27(Maxence)      ; non   ; AN ; AR ; CH  ;
+8214  ; pcc1 ; NOM28(Aurore)           ; non   ; ES ; AN ; PH  ;
+8226  ; pcc1 ; NOM29(Theo)        ; oui   ; AN ;    ; CH  ;
+8019  ; pcc2 ; NOM30(Myriam)      ; oui   ; AN ;    ; PH  ;
+8129  ; pcc2 ; NOM31(Laetitia)      ; oui   ; AN ; ES ; PH  ;
+8131  ; pcc2 ; NOM32(Bastien)     ; oui   ; AL ; AN ; CH  ;
+8138  ; pcc2 ; NOM33(Adam)          ; non   ; AN ;    ; CH  ;
+8174  ; pcc2 ; NOM34(Thomas)      ; non   ; AN ;    ; CH  ;
+8176  ; pcc2 ; NOM35(Dimitri)       ; oui   ; ES ; AN ; PH  ;
+8241  ; pcc2 ; NOM36(Valentin)    ; oui   ; AR ; AN ; PH  ;
+8269  ; pcc2 ; NOM37(Maelle)       ; non   ; AN ; AL ; PH  ;
+8116  ; pcc3 ; NOM38(Maxime)       ; oui   ; AL ; AN ; PH  ;
+8128  ; pcc3 ; NOM39(Mathis)     ; non   ; AN ; AL ; PH  ;
+8353  ; pcc3 ; NOM40(Charline)    ; oui   ; AN ;    ; CH  ;
+8357  ; pcc3 ; NOM41(Lucie)         ; non   ; AN ; ES ; CH  ;
+8412  ; pcc3 ; NOM42(Laura)        ; oui   ; AL ; AN ; PH  ;
+8428  ; pcc3 ; NOM43(Alexandra)        ; oui   ; AN ; ES ; PH  ;
+
+> CANDIDATS ENS v5
+commission ; name          ; tadd ; scei  ; lo ; commentaires ; 
+mpens      ; NOM1(Prenom2) ; non  ; 2496  ; AN ;  ;  ;
+mpens      ; NOM2(Prenom1) ; non  ; 2670  ; AN ; coucou ;  ;
+mpens      ; NOM3(Prenom4) ; non  ; 2516  ; AN ;  ;  ;
+mpens      ; NOM4(Prenom3) ; oui  ; 2096  ; AN ;  ;  ;
+mpens      ; NOM5(Prenom1) ; non  ; 2367  ; AN ;  ;  ;
+pcens      ; NOM6(Prenom6) ; non  ; 12039 ; AL ;  ;  ;
+pcens      ; NOM7(Prenom5) ; oui  ; 02148 ; AN ;  ;  ;
+

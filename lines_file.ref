@@ -1,0 +1,7 @@
+open in read mode: lines_file.in.csv
+open in write mode: lines_file.out.csv
+open in read mode: lines_file.out.csv
+
+real	0m0.002s
+user	0m0.002s
+sys	0m0.000s

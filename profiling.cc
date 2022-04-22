@@ -2,8 +2,13 @@
 
 #include "profiling.h"
 
+std::array<std::chrono::microseconds,NB_COMPTEURS> time_compteurs ;
 
-std::array<std::chrono::microseconds,10> time_compteurs ;
+void time_init()
+ { 
+  for ( auto & compteur : time_compteurs )
+   { compteur = std::chrono::microseconds::zero() ; }
+ }
 
 void time_init( int i )
  { time_compteurs[i] = std::chrono::microseconds::zero() ; } 

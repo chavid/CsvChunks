@@ -203,43 +203,6 @@ LinesFile & operator>>< std::string >( LinesFile & lf, std::string & var )
   return lf ;
  }
 
-bool is_true( std::string_view cell )
- { 
-  if ((cell=="true")||(cell=="T")||(cell=="t")) return true ;
-  if ((cell=="yes")||(cell=="Y")||(cell=="y")) return true ;
-  if ((cell=="oui")||(cell=="O")||(cell=="o")) return true ;
-  return false ;
- }
-
-bool is_false( std::string_view cell )
- { 
-  if ((cell=="false")||(cell=="F")||(cell=="f")) return true ;
-  if ((cell=="no")||(cell=="N")||(cell=="n")) return true ;
-  if ((cell=="non")||(cell=="N")||(cell=="n")) return true ;
-  return false ;
- }
-
-template <>
-LinesFile & operator>>< bool >( LinesFile & lf, bool & var )
- {
-  if (!lf.prepare_extraction()) { return lf ; }
-  if (std::empty(lf.icell_)) { return lf ; }
-
-  if (is_true(lf.icell_)) { var = true ; }
-  else if (is_false(lf.icell_)) { var = false ; }
-  else
-   {
-    std::cout<<"WARNING: invalid bool value: "<<(lf.icell_)<<std::endl ;
-    lf.is_ok_ = false ;
-    //lf.icell_.clear() ;
-    return lf ;
-   }
-  
-  //lf.icell_.clear() ;
-  return lf ;
- }
-
-
 
 // ***************************************************************
 // WRITE Interface

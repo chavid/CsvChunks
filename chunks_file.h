@@ -98,6 +98,9 @@ template <>
 ChunksFile & operator>>< std::string >( ChunksFile &, std::string & var ) ;
 
 template <>
+ChunksFile & operator>>< bool >( ChunksFile &, bool & var ) ;
+
+template <>
 ChunksFile & operator>>< std::pair<int,int> >( ChunksFile &, std::pair<int,int> & var ) ;
 
 

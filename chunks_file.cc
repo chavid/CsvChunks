@@ -238,6 +238,41 @@ ChunksFile & operator>>< std::string >( ChunksFile & cf, std::string & var )
   return cf ;
  }
 
+bool is_true( std::string_view cell )
+ { 
+  if ((cell=="true")||(cell=="T")||(cell=="t")) return true ;
+  if ((cell=="yes")||(cell=="Y")||(cell=="y")) return true ;
+  if ((cell=="oui")||(cell=="O")||(cell=="o")) return true ;
+  return false ;
+ }
+
+bool is_false( std::string_view cell )
+ { 
+  if ((cell=="false")||(cell=="F")||(cell=="f")) return true ;
+  if ((cell=="no")||(cell=="N")||(cell=="n")) return true ;
+  if ((cell=="non")||(cell=="N")||(cell=="n")) return true ;
+  return false ;
+ }
+
+template <>
+ChunksFile & operator>>< bool >( ChunksFile & cf, bool & var )
+ {
+  if (!cf.prepare_extraction())
+   { return cf ; }
+  if ((*cf.pcell_).empty())
+   { return cf ; }
+
+  if (is_true(*cf.pcell_)) { var = true ; }
+  else if (is_false(*cf.pcell_)) { var = false ; }
+  else
+   {
+    std::cout<<"WARNING: invalid bool value: "<<(*cf.pcell_)<<std::endl ;
+    return cf ;
+   }
+  
+  return cf ;
+ }
+
 template <>
 ChunksFile & operator>>< std::pair<int,int> >( ChunksFile & cf, std::pair<int,int> & var )
  {

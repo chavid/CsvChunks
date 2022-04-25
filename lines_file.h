@@ -95,9 +95,6 @@ LinesFile & operator>>( LinesFile & lf, T & var )
 template <>
 LinesFile & operator>>< std::string >( LinesFile &, std::string & var ) ;
 
-template <>
-LinesFile & operator>>< bool >( LinesFile &, bool & var ) ;
-
 template <typename T>
 LinesFile & operator<<( LinesFile & lf, T var )
  {

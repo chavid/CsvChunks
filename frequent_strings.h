@@ -19,7 +19,7 @@ class FrequentString
 
     static void init() ;
 
-    FrequentString() : ptr_{} {}
+    FrequentString() : ptr_{ StaticStrings::empty_string_ptr() } {}
     explicit FrequentString( std::string_view sv ) : ptr_{ StaticStrings::ptr(sv) } {}
     std::string_view str() const { return StaticStrings::str(ptr_) ; }
 

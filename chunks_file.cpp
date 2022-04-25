@@ -5,20 +5,6 @@
 #include <vector>
 #include <iostream>
 
-void read_lines
- ( const std::string & path,
-   ChunksFile & finput
- )
- {
-  if (!finput.open(path)) return ; 
-  while (finput.read_next_line())
-   {
-    std::string element = "" ;
-    finput>>element ;
-    std::cout<<element<<std::endl ;
-   }
- }
-
 struct Chunk
  {
   FrequentString name ;
@@ -37,7 +23,7 @@ void read_chunks
  {
   if (finput.open(path))
    { 
-    while (finput.read_next_chunk())
+    while (finput.seek_next_chunk())
      {
       if ((finput.chunk_name()!="CANDIDATS"_fs)||
           (finput.chunk_version()!="v5"_fs))
@@ -88,14 +74,14 @@ void write_chunks
    ChunksFile & foutput  
  )
  {
-  if (foutput.open(path,ChunksFile::Mode::WRITE))
+  if (foutput.open(path,LinesFile::Mode::WRITE))
   for ( auto const & chunk : chunks )
    {
     foutput.chunk_name(chunk.name) ;
     foutput.chunk_flavor(chunk.flavor) ;
     foutput.chunk_version(chunk.version) ;
     foutput.chunk_columns(chunk.columns) ;
-    foutput.change_format(chunk.widths) ;
+    foutput.chunk_widths(chunk.widths) ;
     foutput.chunk_write() ;
     for ( auto const & line : chunk.content )
      {
@@ -149,10 +135,6 @@ int main()
  {
   StaticStrings::init() ;
   ChunksFile cf(true) ;
-
-  // reading an re-reading a name/value list
-  read_lines("chunks_file.in.csv",cf) ;
-  read_lines("chunks_file.in.csv",cf) ;
 
   // reading csv chunks
   std::vector<Chunk> chunks1, chunks2 ;

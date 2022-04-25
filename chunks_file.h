@@ -4,6 +4,7 @@
 
 #include "frequent_strings.h"
 #include "glossary.h"
+#include "lines_file.h"
 #include <string>
 #include <string_view>
 #include <vector>
@@ -12,26 +13,25 @@
 #include <sstream>
 #include <utility>
 #include <iomanip>
+#include <cassert>
 
 class ChunksFile
  {
   public :
 
-    enum class Mode { UNDEFINED, READ, WRITE } ;
-
     ChunksFile( bool debug =false ) ;
-    bool open( std::string_view name, Mode = Mode::READ ) ;
+    bool open( std::string_view name, LinesFile::Mode = LinesFile::Mode::READ ) ;
     operator void *() ;
     bool close() ;
     ~ChunksFile() ;
 
     // Interface de lecture
-    bool read_next_chunk() ;
+    bool seek_next_chunk() ;
     FrequentString chunk_name() { return chunk_name_ ; }
     FrequentString chunk_flavor() { return chunk_flavor_ ; }
     FrequentString chunk_version() { return chunk_version_ ; }
     const std::vector<std::string> & chunk_columns() { return chunk_columns_ ; }
-    void read_columns_order( std::string_view ) ; // MUST be called after read_next_chunk()
+    void read_columns_order( std::string_view ) ; // MUST be called after seek_next_chunk()
     bool read_next_line() ;
     template <typename T>
     friend ChunksFile & operator>>( ChunksFile &, T & var ) ;
@@ -45,91 +45,88 @@ class ChunksFile
     void chunk_flavor( FrequentString flavor ) { chunk_flavor_ = flavor ; }
     void chunk_version( FrequentString version ) { chunk_version_ = version ; }
     void chunk_columns( const std::vector<std::string> & columns ) { chunk_columns_ = columns ; }
-    void change_format( const std::vector<std::size_t> & widths ) ;
+    void chunk_widths( const std::vector<std::size_t> & widths ) ;
+    void reset_widths() ;
     void chunk_write() ;
-    void remove_format() ;
     void write_next_line() ;
     template <typename T>
     friend ChunksFile & operator<<( ChunksFile &, T var ) ;
 
   private :
 
-    bool is_ok_ = true ;
-    bool eol_ = false ;
-    bool debug_ = false ;
-    std::string name_ {} ;
-    Mode mode_ { Mode::UNDEFINED } ;
+    LinesFile file_ ;
 
-    // section courante
+    // current chunk
     FrequentString chunk_name_ ;
     FrequentString chunk_flavor_ ;
     FrequentString chunk_version_ ;
-    std::vector<std::string> chunk_columns_ ;
-
-    std::ofstream ofile_ ;
-    std::vector<std::size_t>::size_type current_indice_ = 0 ;
     std::vector<std::size_t> widths_ ;
+    bool is_eoc_ ; // end of chunk
 
-    std::ifstream ifile_ ;
-    std::istringstream iline_ ;
-    bool iline_ready_ = false ;
+    // read
+    std::vector<std::string> chunk_columns_ ;
     std::vector<std::string> icells_ ;
     std::vector<std::vector<std::string>::size_type> iorder_ ;
+    std::vector<std::size_t>::size_type current_indice_ = 0 ;
     std::string * pcell_ ;
-    bool is_eol_ ;
-    bool is_eof_ ;
+    bool is_eol_ ; // end of line
+    bool remaining_header_line_ ;
 
     bool prepare_extraction() ;
     bool prepare_line() ;
 
     bool ready_for_reading() ;   // cannot be const because of is_open()
-    bool ready_for_writing() ; // which is not const with gcc 3.4.6
  } ;
 
 
 //========================================================
-// templates
+// Read inline
 //========================================================
 
 template <typename T>
-ChunksFile & operator>>( ChunksFile & ft, T & var )
+ChunksFile & operator>>( ChunksFile & cf, T & var )
  {
-  if (ft.prepare_extraction())
+  if (cf.prepare_extraction())
    {
-    std::istringstream iss(*ft.pcell_) ;
+    std::istringstream iss(*cf.pcell_) ;
     iss>>var ;
    }
-  return ft ;
+  return cf ;
  }
 
 template <>
 ChunksFile & operator>>< std::string >( ChunksFile &, std::string & var ) ;
 
 template <>
-ChunksFile & operator>>< bool >( ChunksFile &, bool & var ) ;
-
-template <>
 ChunksFile & operator>>< std::pair<int,int> >( ChunksFile &, std::pair<int,int> & var ) ;
 
+
+//========================================================
+// Write inline
+//========================================================
+
 template <typename T>
-ChunksFile & operator<<( ChunksFile & ft, T var )
+ChunksFile & operator<<( ChunksFile & cf, T var )
  {
-  if ( (ft.mode_!=ChunksFile::Mode::WRITE) || ! ft.ready_for_writing() )
-   { return ft ; }
-  if (ft.widths_.size()==0)
-   { ft.ofile_<<var ; }
+  assert(cf.file_.mode()==LinesFile::Mode::WRITE) ;
+  if (cf.is_eoc_) { return cf ; }
+  if (cf.widths_.empty())
+   {
+    cf.file_<<var ;
+   }
   else
    {
     std::ostringstream oss ;
-    oss<<var ;
-    if (ft.current_indice_>0)
-     { ft.ofile_<<" " ; }
-    if (ft.current_indice_<ft.widths_.size())
-     { ft.ofile_<<std::setw(ft.widths_[ft.current_indice_]) ; }
-    ft.ofile_<<oss.str()<<" ;" ;
-    ft.current_indice_++ ;
+    oss<<std::left ;
+    if (cf.current_indice_>0)
+     { oss<<" " ; }
+    if (cf.current_indice_<cf.widths_.size())
+     { oss<<std::setw(cf.widths_[cf.current_indice_]) ; }
+    oss<<var<<" " ;
+    cf.file_<<oss.str() ;
+    cf.current_indice_++ ;
    }
-  return ft ;
+  return cf ;
  }
 
 #endif

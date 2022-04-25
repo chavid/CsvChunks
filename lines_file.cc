@@ -155,6 +155,25 @@ bool LinesFile::read_next_line()
 
   } while (std::empty(iline_)) ;
 
+  // élimination des caractères accentués
+  for ( auto & c : iline_ )
+   {
+    unsigned char uc = c ;
+    if ((192<=uc)&&(uc<=197)) c = 'A' ;
+    if ((199<=uc)&&(uc<=199)) c = 'C' ;
+    if ((200<=uc)&&(uc<=203)) c = 'E' ;
+    if ((204<=uc)&&(uc<=207)) c = 'I' ;
+    if ((210<=uc)&&(uc<=214)) c = 'O' ;
+    if ((217<=uc)&&(uc<=220)) c = 'U' ;
+   
+    if ((224<=uc)&&(uc<=229)) c = 'a' ;
+    if ((231<=uc)&&(uc<=231)) c = 'c' ;
+    if ((232<=uc)&&(uc<=235)) c = 'e' ;
+    if ((236<=uc)&&(uc<=239)) c = 'i' ;
+    if ((242<=uc)&&(uc<=246)) c = 'o' ;
+    if ((249<=uc)&&(uc<=252)) c = 'u' ;
+   }
+
   // feed iss_
   iss_.str(iline_) ;
   iss_.clear() ;

@@ -10,8 +10,8 @@ targets = [
     { "name" : "static_strings" , "command" : "./static_strings.exe"  },
     { "name" : "frequent_strings" , "command" : "./frequent_strings.exe"  },
     { "name" : "glossary" , "command" : "./glossary.exe"  },
-    { "name" : "lines_file" , "command" : "time ./lines_file.exe"  },
-    { "name" : "chunks_file" , "command" : "time ./chunks_file.exe"  },
+    { "name" : "lines_file" , "command" : "./lines_file.exe"  },
+    { "name" : "chunks_file" , "command" : "./chunks_file.exe"  },
     { "name" : "ranked_collection" , "command" : "./ranked_collection.exe"  },
 
 ]

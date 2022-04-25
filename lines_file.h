@@ -26,14 +26,21 @@ class LinesFile
     // construction/destruction, open/close, delim, status
     LinesFile( bool debug = false ) ;
     bool open( std::string_view name, Mode = Mode::READ ) ;
-    void word_delim( char c = ' ' ) { word_delim_ = c ; }
-    void fill_char( char c = ' ' ) { fill_char_ = c ; }
     operator void *() ;
     bool close() ;
     ~LinesFile() ;
 
+    // config
+    void word_delim( char c = ' ' ) { word_delim_ = c ; }
+    void fill_char( char c = ' ' ) { fill_char_ = c ; }
+    char word_delim() { return word_delim_ ; }
+    char fill_char() { return fill_char_ ; }
+    bool debug() { return debug_ ; }
+    std::string_view name() { return name_ ; }
+    Mode mode() { return mode_ ; }
+
     // read interface
-    bool read_next_line() ;
+    bool read_next_line() ; // get next non empty line
     std::string const & line() { return iline_ ; }
     template <typename T>
     friend LinesFile & operator>>( LinesFile &, T & var ) ;

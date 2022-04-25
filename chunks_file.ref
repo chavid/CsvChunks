@@ -1,16 +1,4 @@
 open in read mode: chunks_file.in.csv
-STRING = DUMMY
-PATHS = examinateurs.csv ../input/entrees.csv
-DATE = 2019/06/17
-BOOLEAN = 0
-INTEGERS = 1 2 3
-open in read mode: chunks_file.in.csv
-STRING = DUMMY
-PATHS = examinateurs.csv ../input/entrees.csv
-DATE = 2019/06/17
-BOOLEAN = 0
-INTEGERS = 1 2 3
-open in read mode: chunks_file.in.csv
 mpc1 NOM1(Sophie) 4009 oui AN  PH 
 mpc1 NOM2(Samuel) 4405 oui AN CH PH 
 mpc1 NOM3(Lisa) 4504 oui AN  MA 
@@ -115,8 +103,4 @@ MPENS NOM4(PRENOM3) 2096 OUI  AN
 MPENS NOM5(PRENOM1) 2367 NON  AN 
 PCENS NOM6(PRENOM6) 12039 NON  AL 
 PCENS NOM7(PRENOM5) 02148 OUI  AN 
-static strings size: 1040
-
-real	0m0.034s
-user	0m0.030s
-sys	0m0.004s
+static strings size: 1042

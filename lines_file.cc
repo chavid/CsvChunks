@@ -1,6 +1,6 @@
 
 #include "lines_file.h"
-//#include <regex>
+#include <regex>
 #include <iostream>
 #include <iomanip>
 #include <fstream>
@@ -175,8 +175,10 @@ bool LinesFile::read_next_line()
     if ((249<=uc)&&(uc<=252)) c = 'u' ;
    }
 
-  // feed iss_
-  iss_.str(iline_) ;
+  // merge padding characters
+
+  // feed iss_, merging 
+  iss_.str(std::regex_replace(iline_,std::regex("\\s+")," ")) ;
   iss_.clear() ;
   is_eol_ = false ;
   return true ;

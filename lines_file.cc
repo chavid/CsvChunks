@@ -110,6 +110,7 @@ LinesFile::operator void *()
 
   if ( (mode_==Mode::READ) && is_eol_ )
    { return nullptr ; }
+   
   return this ;
  }
 
@@ -185,11 +186,11 @@ bool LinesFile::prepare_extraction()
  {
   if (is_eol_)
    { return false ; }
-  while (iss_.peek()==fill_char_)
+  while (iss_.peek()==padding_char_)
    { iss_.get() ; }
   is_eol_ = !std::getline(iss_,icell_,word_delim_) ;
   if (!is_eol_)
-  while (icell_.back()==fill_char_)
+  while (icell_.back()==padding_char_)
    { icell_.pop_back() ; }
   return (!is_eol_) ;
  }

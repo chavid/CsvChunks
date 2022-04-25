@@ -32,9 +32,9 @@ class LinesFile
 
     // config
     void word_delim( char c = ' ' ) { word_delim_ = c ; }
-    void fill_char( char c = ' ' ) { fill_char_ = c ; }
+    void fill_char( char c = ' ' ) { padding_char_ = c ; }
     char word_delim() { return word_delim_ ; }
-    char fill_char() { return fill_char_ ; }
+    char fill_char() { return padding_char_ ; }
     bool debug() { return debug_ ; }
     std::string_view name() { return name_ ; }
     Mode mode() { return mode_ ; }
@@ -54,7 +54,7 @@ class LinesFile
 
     char line_delim_ = '\n' ;
     char word_delim_ = ' ' ;
-    char fill_char_ = ' ' ;
+    char padding_char_ = ' ' ;
 
     bool is_ok_ = true ;
     bool is_eol_ = true ;
@@ -100,7 +100,18 @@ LinesFile & operator<<( LinesFile & lf, T var )
  {
   if ( (lf.mode_!=LinesFile::Mode::WRITE) || (!lf.is_ok_) )
    { return lf ; }
-  lf.oss_<<var<<lf.word_delim_ ;
+  if (lf.word_delim_!=lf.padding_char_)
+   {
+    // We preserve empty values
+    lf.oss_<<var<<lf.word_delim_ ;
+   }
+  else
+   {
+    // We only keep intermediary delimiters
+    if (lf.oss_.view().size()>0)
+    { lf.oss_<<lf.word_delim_ ; }
+    lf.oss_<<var ;
+   }
   return lf ;
  }
 

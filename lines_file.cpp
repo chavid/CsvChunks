@@ -70,7 +70,12 @@ void diff_line
   if (line1.size()!=line2.size())
    {
     std::ostringstream oss ;
-    oss<<message<<": "<<line1.size()<<" elements != "<<line2.size()<<" elements !"<<std::endl ;
+    oss<<message<<": " ;
+    for ( auto const & word : line1 )
+     { oss<<'|'<<word<<'|' ; }
+    oss<<" != " ;
+    for ( auto const & word : line2 )
+     { oss<<'|'<<word<<'|' ; }
     throw std::runtime_error(oss.str()) ;
    }
   auto iwordmax {line1.size()} ;

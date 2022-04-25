@@ -86,18 +86,20 @@ bool ChunksFile::seek_next_chunk()
   // extract information
   file_.word_delim(' ') ;
   std::string prompt ;
-  chunk_name_ = FrequentString{} ;
-  chunk_flavor_ = FrequentString{} ;
-  chunk_version_ = FrequentString{} ;
-  file_>>prompt>>chunk_name_>>chunk_flavor_>>chunk_version_ ;
-  if ((chunk_version_.empty())||(chunk_version_==";"_fs))
+  std::string chunk_name ;
+  std::string chunk_flavor ;
+  std::string chunk_version ;
+  file_>>prompt>>chunk_name>>chunk_flavor>>chunk_version ;
+  if ((chunk_version.empty())||(chunk_version[0]==';'))
    {
-    chunk_version_ = chunk_flavor_ ;
-    chunk_flavor_ = FrequentString{} ;
+    chunk_version = chunk_flavor ;
+    chunk_flavor.clear() ;
    }
-  //chunk_name_ = FrequentString(std::regex_replace(chunk_name,std::regex(";*$"),"")) ;
-  //chunk_flavor_ = FrequentString(std::regex_replace(chunk_flavor,std::regex(";*$"),"")) ;
-  //chunk_version_ = FrequentString(std::regex_replace(chunk_version,std::regex(";*$"),"")) ;
+   
+  // there may be trailing semicolons due to an excel edit
+  chunk_name_ = FrequentString(std::regex_replace(chunk_name,std::regex(";*$"),"")) ;
+  chunk_flavor_ = FrequentString(std::regex_replace(chunk_flavor,std::regex(";*$"),"")) ;
+  chunk_version_ = FrequentString(std::regex_replace(chunk_version,std::regex(";*$"),"")) ;
   file_.word_delim(';') ;
 
   // columns titles

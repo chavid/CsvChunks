@@ -9,6 +9,7 @@
 #include <sstream>
 #include <utility>
 #include <optional>
+#include <algorithm>
 
 #include "strong_int.h"
 

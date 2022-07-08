@@ -3,6 +3,7 @@
 #include "static_strings.h"
 #include <sstream>
 #include <algorithm>
+#include <array>
 
 
 std::pmr::polymorphic_allocator<char> * StaticStrings::char_allocator_p_ ;

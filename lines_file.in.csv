@@ -8,7 +8,7 @@ BOOLEAN  = 0
 INTEGERS = 1 2 3
 
 > CANDIDATS MPPC v5
-anonymat ; COMM ;  nom                  ; adm-x ; lo ; lf ; ads ;
+id ; comm ;  nom                  ; adm-x ; lo ; lf ; ads ;
 4009  ; mpc1 ; NOM1(Sophie)    ; oui   ; AN ;    ; PH
 4405  ; mpc1 ; NOM2(Samuel)    ; oui   ; AN ; CH ; PH  ;
 4504  ; mpc1 ; NOM3(Lisa)      ; oui   ; AN ;    ; MA  ;

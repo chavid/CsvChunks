@@ -34,13 +34,13 @@ void read_chunks
       chunk.version = finput.chunk_version() ;
       if (chunk.flavor=="mppc"_fs)
        {
-        finput.read_columns_order("comm;name|nom;anonymat;adm-x;lo;lf;ads") ;
-        chunk.columns.assign({ "comm", "nom", "anonymat", "adm-x", "lo", "lf", "ads" }) ;
+        finput.read_columns_order("comm;name|nom;id|numero|anonymat|scei;adm-x;lo;lf;ads") ;
+        chunk.columns.assign({ "comm", "nom", "id", "adm-x", "lo", "lf", "ads" }) ;
        }
       else if (chunk.flavor=="ens"_fs)
        {
-        finput.read_columns_order("Commission;Name|Nom;Scei;TAdd;algo;Lo") ;
-        chunk.columns.assign({ "commission", "nom", "scei", "tadd", "algo", "lo" }) ;
+        finput.read_columns_order("Commission;Name|Nom;id|numero|scei;TAdd;algo;Lo") ;
+        chunk.columns.assign({ "commission", "nom", "id", "tadd", "algo", "lo" }) ;
        }
       else
        { throw std::runtime_error("unknown flavor") ; }

@@ -61,6 +61,7 @@ class Enum : public StrongInt<typename Glossary<TagType>::Id,TagType>
      : StrongBase(add?glo__.add(sv):glo__.id(sv)) {}
 
     static StrongBase size() { return StrongBase(glo__.size()) ; } 
+    std::string const & str() { return glo__.str(this->value()) ; }
 
     friend std::ostream & operator<<( std::ostream & os, Enum<TagType> e )
      { return (os<<e.glo__.str(e.value())) ; }

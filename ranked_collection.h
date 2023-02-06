@@ -25,6 +25,12 @@ struct RankedCollection : public std::vector<T *>
     if (val==0) throw std::runtime_error("Not really implemented") ;
     else return this->operator[](val-1) ;
    }
+  T * get( Rank r )
+   {
+    typename Collection::size_type val = r.value() ;
+    if (val==0) throw std::runtime_error("Not really implemented") ;
+    else return this->operator[](val-1) ;
+   }
 
   template< typename ... Args >
   T * make( Args && ... args )

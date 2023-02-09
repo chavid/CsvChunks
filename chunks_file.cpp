@@ -39,8 +39,8 @@ void read_chunks
        }
       else if (chunk.flavor=="ens"_fs)
        {
-        finput.read_columns_order("Commission;Name|Nom;id|numero|scei;TAdd;Lo;algo") ;
-        chunk.columns.assign({ "commission", "nom", "id", "tadd", "lo", "algo" }) ;
+        finput.read_columns_order("Commission;Name|Nom;id|numero|scei;TAdd;algo;Lo") ;
+        chunk.columns.assign({ "commission", "nom", "id", "tadd", "algo", "lo" }) ;
        }
       else
        { throw std::runtime_error("unknown flavor") ; }
@@ -52,9 +52,9 @@ void read_chunks
         std::size_t column = 0 ;
         std::string word ;
 
-        auto word_process = [&]( std::string_view field )
+        auto word_process = [&]( std::string_view /* field */ )
          {
-          std::cout<<"["<<field<<"] "<<word<<" " ;
+          std::cout<<word<<" " ;
           line.push_back(FrequentString{word}) ;
           if ((column<chunk.widths.size())&&(word.size()>chunk.widths[column]))
            { chunk.widths[column] = word.size() ; }

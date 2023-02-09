@@ -39,8 +39,8 @@ void read_chunks
        }
       else if (chunk.flavor=="ens"_fs)
        {
-        finput.read_columns_order("Commission;Name|Nom;id|numero|scei;TAdd;algo;Lo") ;
-        chunk.columns.assign({ "commission", "nom", "id", "tadd", "algo", "lo" }) ;
+        finput.read_columns_order("Commission;Name|Nom;id|numero|scei;TAdd;Lo;algo") ;
+        chunk.columns.assign({ "commission", "nom", "id", "tadd", "lo", "algo" }) ;
        }
       else
        { throw std::runtime_error("unknown flavor") ; }
@@ -49,17 +49,54 @@ void read_chunks
       while (finput.read_next_line())
        {
         std::vector<FrequentString> line ;
-        std::string word ;
         std::size_t column = 0 ;
-        while (finput>>word)
+        std::string word ;
+
+        auto word_process = [&]( std::string_view field )
          {
-          std::cout<<word<<" " ;
+          std::cout<<"["<<field<<"] "<<word<<" " ;
           line.push_back(FrequentString{word}) ;
           if ((column<chunk.widths.size())&&(word.size()>chunk.widths[column]))
            { chunk.widths[column] = word.size() ; }
           column++ ;
           word = "" ;
+         } ;
+        auto string_extract = [&]( std::string_view field )
+         {
+          finput>>word ;
+          word_process(field) ;
+         } ;
+        auto bool_extract = [&]( std::string_view field )
+         {
+          bool value ;
+          finput>>value ;
+          word = value?"oui":"non" ;
+          word_process(field) ;
+         } ;
+
+        if (chunk.flavor=="mppc"_fs)
+         {
+          string_extract("comm") ;
+          string_extract("nom") ;
+          string_extract("id") ;
+          bool_extract("adm-x") ;
+          string_extract("lo") ;
+          string_extract("lf") ;
+          string_extract("ads") ;
          }
+        else if (chunk.flavor=="ens"_fs)
+         {
+          string_extract("commission") ;
+          string_extract("nom") ;
+          string_extract("id") ;
+          bool_extract("tadd") ;
+          string_extract("algo") ;
+          string_extract("lo") ;
+         }
+        else
+         { throw std::runtime_error("unknown flavor") ; }
+
+
         std::cout<<std::endl ;
         chunk.content.push_back(line) ;
        }

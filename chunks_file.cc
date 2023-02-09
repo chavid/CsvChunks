@@ -240,21 +240,26 @@ ChunksFile & operator>>< std::string >( ChunksFile & cf, std::string & var )
   return cf ;
  }
 
+using BoolEnum = Enum<struct BoolEnumTag> ;
+template<> BoolEnum::EnumGlossary BoolEnum::glo__ {} ;
+BoolEnum const BOOL_TRUE { "true|t|yes|y|oui|o", true } ;
+BoolEnum const BOOL_FALSE { "false|f|no|n|non", true } ;
+
 bool is_true( std::string_view cell )
- { 
-  if ((cell=="true")||(cell=="T")||(cell=="t")) return true ;
-  if ((cell=="yes")||(cell=="Y")||(cell=="y")) return true ;
-  if ((cell=="oui")||(cell=="O")||(cell=="o")) return true ;
-  return false ;
- }
+ { return (BoolEnum{cell}==BOOL_TRUE) ; }
+//  if ((cell=="true")||(cell=="TRUE")||(cell=="T")||(cell=="t")) return true ;
+//  if ((cell=="yes")||(cell=="Y")||(cell=="YES")||(cell=="y")) return true ;
+//  if ((cell=="oui")||(cell=="OUI")||(cell=="O")||(cell=="o")) return true ;
+//  return false ;
+// }
 
 bool is_false( std::string_view cell )
- { 
-  if ((cell=="false")||(cell=="F")||(cell=="f")) return true ;
-  if ((cell=="no")||(cell=="N")||(cell=="n")) return true ;
-  if ((cell=="non")||(cell=="N")||(cell=="n")) return true ;
-  return false ;
- }
+ { return (BoolEnum{cell}==BOOL_FALSE) ; }
+//  if ((cell=="false")||(cell=="FALSE")||(cell=="F")||(cell=="f")) return true ;
+//  if ((cell=="no")||(cell=="NO")||(cell=="N")||(cell=="n")) return true ;
+//  if ((cell=="non")||(cell=="NON")||(cell=="N")||(cell=="n")) return true ;
+//  return false ;
+// }
 
 template <>
 ChunksFile & operator>>< bool >( ChunksFile & cf, bool & var )

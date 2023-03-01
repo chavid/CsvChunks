@@ -153,7 +153,7 @@ template <typename TagType>
 std::optional<typename Glossary<TagType>::Id> Glossary<TagType>::id_opt( std::string_view term_sv ) const
  {
   // when the term does not exists, we want to return the highest number,
-  // static_cast<Id>(-1)
+  // static_cast<Id>(std::numeric_limits<int>::max())
   Id id = find_(term_sv) ;
   if (id < data_.size())
    { return id ; }

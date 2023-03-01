@@ -28,6 +28,7 @@ class StrongArray1D
     using StrongInt = TStrongInt ;
     using Value = TValue ;
     using Collection = std::vector<Value> ;
+    using Indice = typename Collection::size_type ;
     using Reference = typename Collection::reference ;
     using ConstReference = typename Collection::const_reference ;
 
@@ -36,17 +37,17 @@ class StrongArray1D
     void resize( StrongInt e, Value const & v ) ;
 
     Reference operator[]( StrongInt e )
-     { return collection_[e.value()] ; }
+     { return collection_[Indice(e.value())] ; }
     ConstReference operator[]( StrongInt e ) const
-     { return collection_[e.value()] ; }
+     { return collection_[Indice(e.value())] ; }
 
     Reference at( StrongInt e )
-     { return collection_.at(e.value()) ; }
+     { return collection_.at(Indice(e.value())) ; }
     ConstReference at( StrongInt e ) const
-     { return collection_.at(e.value()) ; }
+     { return collection_.at(Indice(e.value())) ; }
 
-    typename Collection::size_type size() const
-     { return collection_.size() ; }
+    StrongInt size() const
+     { return StrongInt{collection_.size()} ; }
 
   private :
 
@@ -60,7 +61,7 @@ template <strong_int TStrongInt, typename TValue>
 void StrongArray1D<TStrongInt,TValue>::resize( TStrongInt e, TValue const & v )
  {
   collection_.clear() ;
-  collection_.resize(e.value(),v) ;
+  collection_.resize(Indice(e.value()),v) ;
  }
 
 
@@ -105,8 +106,8 @@ StrongArray2D<TSI1,TSI2,TV>::StrongArray2D()
 template <strong_int TSI1, strong_int TSI2, typename TV>
 void StrongArray2D<TSI1,TSI2,TV>::resize( TSI1 s1, TSI2 s2, TV const & v )
  {
-  s1s2_ = s1.value()*s2.value() ;
-  s2_ = s2.value() ;
+  s1s2_ = Indice(s1.value())*Indice(s2.value()) ;
+  s2_ = Indice(s2.value()) ;
   collection_.clear() ;
   collection_.resize(s1s2_,v) ;
  }
@@ -114,25 +115,25 @@ void StrongArray2D<TSI1,TSI2,TV>::resize( TSI1 s1, TSI2 s2, TV const & v )
 template <strong_int TSI1, strong_int TSI2, typename TV>
 typename StrongArray2D<TSI1,TSI2,TV>::Reference StrongArray2D<TSI1,TSI2,TV>::at( TSI1 e1, TSI2 e2 )
  {
-  if (e2.value()>=s2_)
+  if (Indice(e2.value())>=s2_)
    {
     std::ostringstream oss ;
     oss<<"[StrongArray2D::at] second indice trop grand : "<<e2<<std::ends ;
     throw std::range_error(oss.str()) ;
    }
-  return collection_.at(e1.value()*s2_+e2.value()) ;
+  return collection_.at(Indice(e1.value())*s2_+Indice(e2.value())) ;
  }
 
 template <strong_int TSI1, strong_int TSI2, typename TV>
 typename StrongArray2D<TSI1,TSI2,TV>::ConstReference StrongArray2D<TSI1,TSI2,TV>::at( TSI1 e1, TSI2 e2 ) const
  {
-  if (e2.value()>=s2_)
+  if (Indice(e2.value())>=s2_)
    {
     std::ostringstream oss ;
     oss<<"[StrongArray2D::at] second indice trop grand : "<<e2<<std::ends ;
     throw std::range_error(oss.str()) ;
    }
-  return collection_.at(e1.value()*s2_+e2.value()) ;
+  return collection_.at(Indice(e1.value())*s2_+Indice(e2.value())) ;
  }
 
 
@@ -176,7 +177,7 @@ StrongArray3D<TSI1,TSI2,TSI3,TV>::StrongArray3D()
 template <strong_int TSI1, strong_int TSI2, strong_int TSI3, typename TV>
 void StrongArray3D<TSI1,TSI2,TSI3,TV>::resize( TSI1 s1, TSI2 s2, TSI3 s3, TV const & v )
  {
-  s1_ = s1.value() ; s2_ = s2.value() ; s3_ = s3.value() ;
+  s1_ = Indice(s1.value()) ; s2_ = Indice(s2.value()) ; s3_ = Indice(s3.value()) ;
   s2s3_ = s2_*s3_ ;
   s1s2s3_ = s1_*s2_*s3_ ;
   collection_.clear() ;
@@ -186,49 +187,49 @@ void StrongArray3D<TSI1,TSI2,TSI3,TV>::resize( TSI1 s1, TSI2 s2, TSI3 s3, TV con
 template <strong_int TSI1, strong_int TSI2, strong_int TSI3, typename TV>
 typename StrongArray3D<TSI1,TSI2,TSI3,TV>::Reference StrongArray3D<TSI1,TSI2,TSI3,TV>::at( TSI1 e1, TSI2 e2, TSI3 e3 )
  {
-  if (e1.value()>=s1_)
+  if (Indice(e1.value())>=s1_)
    {
     std::ostringstream oss ;
     oss<<"[StrongArray3D::at] premier indice trop grand : "<<e1<<std::ends ;
     throw std::range_error(oss.str()) ;
    }
-  if (e2.value()>=s2_)
+  if (Indice(e2.value())>=s2_)
    {
     std::ostringstream oss ;
     oss<<"[StrongArray3D::at] second indice trop grand : "<<e2<<std::ends ;
     throw std::range_error(oss.str()) ;
    }
-  if (e3.value()>=s3_)
+  if (Indice(e3.value())>=s3_)
    {
     std::ostringstream oss ;
     oss<<"[StrongArray3D::at] troisieme indice trop grand : "<<e3<<std::ends ;
     throw std::range_error(oss.str()) ;
    }
-  return collection_.at(e1.value()*s2s3_+e2.value()*s3_+e3.value()) ;
+  return collection_.at(Indice(e1.value())*s2s3_+Indice(e2.value())*s3_+Indice(e3.value())) ;
  }
 
 template <strong_int TSI1, strong_int TSI2, strong_int TSI3, typename TV>
 typename StrongArray3D<TSI1,TSI2,TSI3,TV>::ConstReference StrongArray3D<TSI1,TSI2,TSI3,TV>::at( TSI1 e1, TSI2 e2, TSI3 e3 ) const
  {
-  if (e1.value()>=s1_)
+  if (Indice(e1.value())>=s1_)
    {
     std::ostringstream oss ;
     oss<<"[StrongArray3D::at] premier indice trop grand : "<<e1<<std::ends ;
     throw std::range_error(oss.str()) ;
    }
-  if (e2.value()>=s2_)
+  if (Indice(e2.value())>=s2_)
    {
     std::ostringstream oss ;
     oss<<"[StrongArray3D::at] second indice trop grand : "<<e2<<std::ends ;
     throw std::range_error(oss.str()) ;
    }
-  if (e3.value()>=s3_)
+  if (Indice(e3.value())>=s3_)
    {
     std::ostringstream oss ;
     oss<<"[StrongArray3D::at] troisieme indice trop grand : "<<e3<<std::ends ;
     throw std::range_error(oss.str()) ;
    }
-  return collection_.at(e1.value()*s2s3_+e2.value()*s3_+e3.value()) ;
+  return collection_.at(Indice(e1.value())*s2s3_+Indice(e2.value())*s3_+Indice(e3.value())) ;
  }
 
 

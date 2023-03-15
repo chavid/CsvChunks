@@ -136,7 +136,7 @@ void ChunksFile::read_columns_order( std::string_view columns_sv )
   Columns columns(columns_sv) ;
 
   // precompute the glossary ranks of the chunk columns
-  constexpr auto max_rank = static_cast<Columns::Id>(-1) ;
+  constexpr auto max_rank = static_cast<Columns::Id>(std::numeric_limits<int>::max()) ;
   std::vector<Columns::Id> chunk_ranks(chunk_columns_.size()) ;
   for ( std::size_t i = 0 ; i<chunk_columns_.size() ; ++i )
    {

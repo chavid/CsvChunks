@@ -4,10 +4,10 @@
 class DataElement : public RankedItem<DataElement>
  {
   public :
-    DataElement( unsigned id ) : id_{id} {}
-    unsigned id() const { return id_ ; }
+    DataElement( int id ) : id_{id} {}
+    int id() const { return id_ ; }
   private :
-    unsigned id_ =0 ; 
+    int id_ =0 ; 
  } ;
 
 class DataCollection : public RankedCollection<DataElement>

@@ -91,6 +91,11 @@ class StrongArray2D
     Reference at( StrongInt1 e1, StrongInt2 e2 ) ;
     ConstReference at( StrongInt1 e1, StrongInt2 e2 ) const ;
 
+    StrongInt1 size1() const
+     { return StrongInt1{s1s2_/s2_} ; }
+    StrongInt2 size2() const
+     { return StrongInt2{s2_} ; }
+
   private :
 
     Indice s1s2_ ;

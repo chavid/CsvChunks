@@ -34,6 +34,7 @@ class Glossary
     Id id( std::string_view ) const ;
     std::optional<Id> id_opt( std::string_view ) const ;
     Id size() const { return data_.size() ; }
+    std::vector<Id> range() const ;
     std::string const & str( Id id ) const { return (*(data_[id].begin())); }
 
   private:
@@ -62,6 +63,13 @@ class Enum : public StrongInt<typename Glossary<TagType>::Id,TagType>
      : StrongBase(add?glo__.add(sv):glo__.id(sv)) {}
 
     static StrongBase size() { return StrongBase(glo__.size()) ; } 
+    static std::vector<Enum> range()
+     {
+      std::vector<Enum> res(glo__.size()) ;
+      for ( auto id : glo__.range() )
+       { res[id] = Enum(StrongBase(id)) ; }
+      return res ;
+     }     
     std::string const & str() { return glo__.str(this->value()) ; }
 
     friend std::ostream & operator<<( std::ostream & os, Enum<TagType> e )
@@ -142,6 +150,15 @@ Glossary<TagType>::Glossary( std::string_view terms_sv )
   while (std::getline(terms_iss, synonyms_str, ';'))
    { add(synonyms_str) ; }
 }
+
+template <typename TagType>
+std::vector<typename Glossary<TagType>::Id> Glossary<TagType>::range() const
+ {
+  std::vector<Id> ids(data_.size()) ;
+  for ( Id id {0} ; id<data_.size() ; ++id )
+   { ids[id] = id ; }
+  return ids ;
+ }
 
 template <typename TagType>
 Glossary<TagType>::Id Glossary<TagType>::id( std::string_view term_sv ) const

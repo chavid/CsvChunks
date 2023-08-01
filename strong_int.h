@@ -55,6 +55,8 @@ class StrongInt
      { value_++ ; return *this ; }
     StrongInt operator++( int )
      { StrongInt copy(*this) ; ++*this ; return copy ; }
+    friend StrongInt operator-( StrongInt lhs, StrongInt rhs  )
+     { return StrongInt{lhs.value_-rhs.value_} ; }
   private :
     InternalType value_ ;
  } ;

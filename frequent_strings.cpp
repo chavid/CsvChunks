@@ -4,6 +4,7 @@
 #include <string_view>
 #include <string>
 #include <sstream>
+#include <format>
 
 int main()
  {
@@ -18,8 +19,8 @@ int main()
   
   auto fs3 = "Color1"_fs ;
 
-  std::cout<<fs1<<" "<<fs2<<" "<<fs3<<" "<<std::endl ;
-  std::cout<<(fs1==fs2)<<" "<<(fs1==fs3)<<" "<<std::endl ;
+  std::cout<<std::format("{} {} {} ",fs1,fs2,fs3)<<std::endl ;
+  std::cout<<std::format("{} {} ",(fs1==fs2),(fs1==fs3))<<std::endl ;
 
   return 0 ;
  }

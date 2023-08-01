@@ -4,6 +4,8 @@
 #define FREQUENT_STRINGS_H
 
 #include "static_strings.h"
+#include <iostream>
+#include <format>
 
 
 //===================================================
@@ -43,9 +45,17 @@ class FrequentString
  } ;
 
 FrequentString operator"" _fs ( char const * str, std::size_t ) ;
+
 std::ostream & operator<<( std::ostream & os, FrequentString ) ;
 std::istream & operator>>( std::istream & is, FrequentString & ) ;
 
+template<>
+struct std::formatter<FrequentString> : std::formatter<std::string_view>
+ {
+    template<class FormatContext>
+    auto format( FrequentString fs, FormatContext & fc ) const
+     { return std::formatter<std::string_view>::format(fs.str(), fc) ; }
+ } ;
 
 #endif
 

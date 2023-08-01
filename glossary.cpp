@@ -21,7 +21,7 @@ int main()
   std::istringstream iss ("mp Pc PSI") ;
   iss>>f1>>f2 ; //>>f3 ;
   std::cout<<f1<<" "<<f2<<std::endl ;
-  std::cout<<FILIERE_MP<<" "<<FILIERE_PC<<std::endl ;
+  std::cout<<std::format("{} {}",FILIERE_MP,FILIERE_PC)<<std::endl ;
   std::cout<<(f1==FILIERE_MP)<<" "<<(FILIERE_PC==f2)<<std::endl ;
 
   return 0 ;

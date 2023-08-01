@@ -1,6 +1,7 @@
 
 #include "strong_int.h"
 #include <sstream>
+#include <format>
 
 #define DISPLAY(EXPR) std::cout<<#EXPR<<" : "<<(EXPR)<<std::endl
 #define BOOL(VAR) std::cout<<#VAR<<" is "<<(VAR?"true":"false")<<std::endl ;
@@ -20,7 +21,7 @@ int main()
 
   std::cout<<"i: "<<i1<<" "<<i2<<" "<<i3<<std::endl ;
   std::cout<<"j: "<<j1<<" "<<j2<<" "<<j3<<std::endl ;
-  std::cout<<"k: "<<k1<<" "<<k2<<" "<<k3<<std::endl ;
+  std::cout<<std::format("k: {} {} {}",k1,k2,k3)<<std::endl ;
 
   BOOL(i1) ; BOOL(i2) ; BOOL(i3) ;
   BOOL(j1) ; BOOL(j2) ; BOOL(j3) ;

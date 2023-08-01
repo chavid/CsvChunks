@@ -6,6 +6,7 @@
 #include <string_view>
 #include <vector>
 #include <iostream>
+#include <format>
 #include <sstream>
 #include <utility>
 #include <optional>
@@ -64,7 +65,7 @@ class Enum : public StrongInt<typename Glossary<TagType>::Id,TagType>
     std::string const & str() { return glo__.str(this->value()) ; }
 
     friend std::ostream & operator<<( std::ostream & os, Enum<TagType> e )
-     { return (os<<e.glo__.str(e.value())) ; }
+     { return (os<<e.str()) ; }
     friend std::istream & operator>>( std::istream & is, Enum<TagType> & e )
      { std::string str ; if (is>>str) e = StrongBase(e.glo__.id(str)) ; return is ; }
 
@@ -73,6 +74,13 @@ class Enum : public StrongInt<typename Glossary<TagType>::Id,TagType>
     static EnumGlossary glo__ ;
  } ;
 
+template <typename TagType>
+struct std::formatter<Enum<TagType>> : std::formatter<std::string>
+ {
+    template<class FormatContext>
+    auto format( Enum<TagType> e, FormatContext & fc ) const
+     { return std::formatter<std::string>::format(e.str(), fc) ; }
+ } ;
 
 
 //===================================================

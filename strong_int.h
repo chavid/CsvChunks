@@ -3,6 +3,7 @@
 #define STRONG_INT_H
 
 #include <iostream>
+#include <format>
 #include <sstream>
 #include <vector>
 #include <stdexcept>
@@ -66,6 +67,14 @@ std::ostream & operator<<( std::ostream & os, StrongInt<InternalType,TagType> i 
 template <strong_int_internal InternalType, typename TagType>
 std::istream & operator>>( std::istream & is, StrongInt<InternalType,TagType> & i )
  { return (is>>i.value()) ; }
+
+template <strong_int_internal InternalType, typename TagType>
+struct std::formatter<StrongInt<InternalType,TagType>> : std::formatter<InternalType>
+ {
+    template<class FormatContext>
+    auto format( StrongInt<InternalType,TagType> i, FormatContext & fc ) const
+     { return std::formatter<InternalType>::format(i.value(), fc) ; }
+ } ;
 
 //template <strong_int_internal InternalType, typename TagType>
 //bool operator<( const StrongInt<InternalType,TagType> & i1, const StrongInt<InternalType,TagType> & i2 )

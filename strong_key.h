@@ -3,6 +3,7 @@
 #define STRONG_KEY_H
 
 #include <iostream>
+#include <format>
 #include <sstream>
 #include <vector>
 #include <stdexcept>
@@ -51,6 +52,14 @@ std::ostream & operator<<( std::ostream & os, StrongKey<InternalType,TagType> i 
 template <typename InternalType, typename TagType>
 std::istream & operator>>( std::istream & is, StrongKey<InternalType,TagType> & i )
  { return (is>>i.value()) ; }
+
+template <std::totally_ordered InternalType, typename TagType>
+struct std::formatter<StrongKey<InternalType,TagType>> : std::formatter<InternalType>
+ {
+    template<class FormatContext>
+    auto format( StrongKey<InternalType,TagType> i, FormatContext & fc ) const
+     { return std::formatter<InternalType>::format(i.value(), fc) ; }
+ } ;
 
 //template <std::totally_ordered InternalType, typename TagType>
 //bool operator<( const StrongKey<InternalType,TagType> & i1, const StrongKey<InternalType,TagType> & i2 )

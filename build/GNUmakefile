@@ -5,20 +5,20 @@
 
 SHELL = /bin/bash
 
-LIB_HDRS = $(wildcard *.h)
-LIB_SRCS = $(wildcard *.cc)
-LIB_OBJS = $(patsubst %.cc, %.o, $(LIB_SRCS))
+LIB_HDRS = $(wildcard ../src/*.h)
+LIB_SRCS = $(wildcard ../src/*.cc)
+LIB_OBJS = $(patsubst ../src/%.cc, %.o, $(LIB_SRCS))
 LIB_DEPS = $(patsubst %.o, %.d, $(LIB_OBJS))
 
-PRG_SRCS = $(wildcard *.cpp)
-PRG_EXES = $(patsubst %.cpp, %.exe, $(PRG_SRCS))
+PRG_SRCS = $(wildcard ../src/*.cpp)
+PRG_EXES = $(patsubst ../src/%.cpp, %.exe, $(PRG_SRCS))
 
 LIB = libcsvchunks.so
 
 CXX = g++
-CPPFLAGS = -I.
+CPPFLAGS = -I../src
 LDFLAGS = -L.
-CXXFLAGS = -std=c++20 -O2 -Wall -Wextra -Wfloat-equal
+CXXFLAGS = -std=c++20 -O2 -Wall -Wextra -Wfloat-equal -fcheck-new
 DEPFLAGS = -MT $@ -MMD -MP -MF $*.td
 
 
@@ -47,7 +47,7 @@ verbose:
 	@echo ""
 
 clean:
-	rm -f *.exe *.o *.d *.td
+	rm -f *.exe *.so *.o *.d *.td
 	rm -f *~ core.* core vgcore.* .stamp-*
 
 doc:
@@ -79,12 +79,12 @@ POSTCOMPILE = @mv -f $*.td $*.d && touch $@
 ## Regles implicites
 #############################################################################
 
-%.exe: %.cpp $(LIB)
+%.exe: ../src/%.cpp $(LIB)
 	rm -f $@
 	$(LINK.cc) -lpthread -o $@ $^
 
-%.o : %.cc
-%.o : %.cc %.d
+%.o : ../src/%.cc
+%.o : ../src/%.cc %.d
 	$(COMPILE.cc) $(OUTPUT_OPTION) $<
 	$(POSTCOMPILE)
 

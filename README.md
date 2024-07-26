@@ -7,7 +7,7 @@ It is also expected that some strings will be reused rather often, and should be
 
 ## Compiling
 
-It should work with any compiler supporting C++20. For the time being, use `build.gmake` and `gmake`. The `cmake`flavor is under work.
+It should work with any compiler supporting C++20.
 
 # Users tips and tricks
 

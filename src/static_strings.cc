@@ -35,6 +35,15 @@ std::size_t StaticStrings::size()
   return total ;
  }
 
+static std::string remove_spaces( std::string_view sv )
+ {
+  std::string str ;
+  str.reserve(sv.size()) ;
+  std::copy_if(sv.begin(),sv.end(),std::back_inserter(str),
+   [](unsigned char c){ return !std::isspace(c) ; }) ;
+  return str ;
+ }
+
 static void upper( std::string & str )
  {
   std::transform(str.begin(),str.end(),str.begin(),
@@ -44,7 +53,7 @@ static void upper( std::string & str )
 StaticStrings::Ptr StaticStrings::ptr( std::string_view sv )
  {
   if (sv.empty()) { return empty_string_ptr_ ; }
-  std::string str { sv } ;
+  std::string str { remove_spaces(sv) } ;
   upper(str) ;
   auto [ itr, res ] = strings_.emplace(str,*char_allocator_p_) ;
   return Ptr{&*itr} ;

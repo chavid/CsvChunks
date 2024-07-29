@@ -36,3 +36,7 @@ lines_file.out.csv
 *.exe
 *.out
 *.app
+
+# Releases
+*.tgz
+

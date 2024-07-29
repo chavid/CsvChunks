@@ -9,5 +9,6 @@ cd ${ORIGINAL_DIR}
 
 export MAIN_DIR=${SCRIPT_DIR}
 export BUILD_REL_DIR=build
+export PATH="${MAIN_DIR}/bin:${PATH}"
 export PATH="${MAIN_DIR}/${BUILD_REL_DIR}:${PATH}"
 export LD_LIBRARY_PATH="${MAIN_DIR}/${BUILD_REL_DIR}:${LD_LIBRARY_PATH}"

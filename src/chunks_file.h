@@ -33,6 +33,7 @@ class ChunksFile
     const std::vector<std::string> & chunk_columns() { return chunk_columns_ ; }
     void read_columns_order( std::string_view ) ; // MUST be called after seek_next_chunk()
     bool read_next_line() ;
+    std::size_t line_number() { return file_.line_number() ; }
     template <typename T>
     friend ChunksFile & operator>>( ChunksFile &, T & var ) ;
 

@@ -42,6 +42,7 @@ class LinesFile
     // read interface
     bool read_next_line() ; // get next non empty line
     std::string const & line() { return iline_ ; }
+    std::size_t line_number() { return iline_number_ ; }
     template <typename T>
     friend LinesFile & operator>>( LinesFile &, T & var ) ;
 
@@ -51,6 +52,7 @@ class LinesFile
     bool write_next_line() ;
 
   private :
+
 
     char line_delim_ = '\n' ;
     char word_delim_ = ' ' ;
@@ -68,6 +70,7 @@ class LinesFile
 
     std::ifstream ifile_ ;
     std::string iline_ ;
+    std::size_t iline_number_ = 0 ;
     std::istringstream iss_ ;
     std::string icell_ ;
 

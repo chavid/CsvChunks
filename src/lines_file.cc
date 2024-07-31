@@ -36,6 +36,7 @@ bool LinesFile::open
     if (debug_)
      { std::cout<<"open in read mode: "<<name_<<std::endl ; }
     ifile_.open(name_.c_str()) ;
+    iline_number_ = 0 ;
     if (!ifile_.is_open())
      {
       std::cout<<"failed open in read mode: "<<name_<<std::endl ;
@@ -133,6 +134,8 @@ bool LinesFile::read_next_line()
     // extract one line
     if (!std::getline(ifile_,iline_,line_delim_))
      { return false ; }
+    else
+     { iline_number_++ ; }
 
     // remove trailing control characters
     while ( (!iline_.empty()) && (iline_.back()<32) )

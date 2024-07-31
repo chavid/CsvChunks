@@ -204,6 +204,7 @@ int main()
     std::cout<<e.what()<<std::endl ;
    }
   std::cout<<"static strings size: "<<StaticStrings::size()<<std::endl ;
+  std::cout<<"final line: "<<cf.line_number()<<std::endl ;
   return 0 ;
  }
 

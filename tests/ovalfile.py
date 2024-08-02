@@ -11,7 +11,8 @@ targets = [
     { "name" : "frequent_strings" , "command" : "frequent_strings.exe"  },
     { "name" : "glossary" , "command" : "glossary.exe"  },
     { "name" : "lines_file" , "command" : "lines_file.exe"  },
-    { "name" : "chunks_file" , "command" : "chunks_file.exe"  },
+    { "name" : "chunks_file" , "command" : "chunks_file.exe chunks_file.in.csv"  },
+    { "name" : "chunks_file_invalid" , "command" : "chunks_file.exe chunks_file.invalid.csv"  },
     { "name" : "ranked_collection" , "command" : "ranked_collection.exe"  },
 
 ]

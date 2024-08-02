@@ -104,6 +104,7 @@ bool ChunksFile::seek_next_chunk()
 
   // columns titles
   chunk_columns_.clear() ;
+  chunk_regex_.clear() ;
   icells_.clear() ;
   iorder_.clear() ;
   if (file_.read_next_line())
@@ -114,7 +115,8 @@ bool ChunksFile::seek_next_chunk()
      {
       std::transform(column.begin(),column.end(),column.begin(),
         [](unsigned char c){ return std::toupper(c) ; } ) ;
-      chunk_columns_.push_back(std::move(column)) ;
+      chunk_columns_.emplace_back(std::move(column)) ;
+      chunk_regex_.emplace_back(R"(.*)") ;
      }
     else
      { throw std::runtime_error("anonymous column ?!") ; }
@@ -129,38 +131,50 @@ bool ChunksFile::seek_next_chunk()
    { return false ; }
  }
 
-using Columns = Glossary<struct ColumnsFoo> ;
-
 void ChunksFile::read_columns_order( std::string_view columns_sv )
  {
-  Columns columns(columns_sv) ;
+  columns_glossary_ = Columns{columns_sv} ;
 
   // precompute the glossary ranks of the chunk columns
-  constexpr auto max_rank = static_cast<Columns::Id>(std::numeric_limits<int>::max()) ;
-  std::vector<Columns::Id> chunk_ranks(chunk_columns_.size()) ;
+  constexpr auto unknown_rank = static_cast<Columns::Id>(std::numeric_limits<int>::max()) ;
+  std::vector<Columns::Id> chunk_read_ranks(chunk_columns_.size()) ;
   for ( std::size_t i = 0 ; i<chunk_columns_.size() ; ++i )
    {
-    chunk_ranks[i] = columns.id_opt(chunk_columns_[i]).value_or(max_rank) ;
-    if (chunk_ranks[i]==max_rank)
+    chunk_read_ranks[i] = columns_glossary_.id_opt(chunk_columns_[i]).value_or(unknown_rank) ;
+    if (chunk_read_ranks[i]==unknown_rank)
      { std::cout<<"WARNING: unknown column: "<<chunk_columns_[i]<<std::endl ; }
    }
 
   // detect lacking columns
-  for ( Columns::Id id = 0 ; id < columns.size() ; ++id )
-  if ( std::find(chunk_ranks.cbegin(),chunk_ranks.cend(),id) == chunk_ranks.cend() )
+  for ( Columns::Id id = 0 ; id < columns_glossary_.size() ; ++id )
+  if ( std::find(chunk_read_ranks.cbegin(),chunk_read_ranks.cend(),id) == chunk_read_ranks.cend() )
    {
-    std::cout<<"WARNING: lacking column: "<<columns.str(id)<<std::endl ;
-    chunk_ranks.push_back(id) ;
+    std::cout<<"WARNING: lacking column: "<<columns_glossary_.str(id)<<std::endl ;
+    chunk_read_ranks.push_back(id) ;
     iorder_.push_back(iorder_.back()+1) ;
    }
 
   // sort the indirect indexes
   std::sort(iorder_.begin(),iorder_.end(),[&]( auto i1, auto i2 )
-   { return (chunk_ranks[i1]<chunk_ranks[i2]) ; }) ;
+   { return (chunk_read_ranks[i1]<chunk_read_ranks[i2]) ; }) ;
 
   // so to ignore unknown columns
-  auto nb_unknown = std::count(chunk_ranks.cbegin(),chunk_ranks.cend(),max_rank) ;
+  auto nb_unknown = std::count(chunk_read_ranks.cbegin(),chunk_read_ranks.cend(),unknown_rank) ;
   iorder_.resize(iorder_.size()-nb_unknown) ;
+ }
+
+void ChunksFile::read_column_regex( std::string_view column, const std::string & regex )
+ {
+  constexpr auto unknown_rank = static_cast<Columns::Id>(std::numeric_limits<int>::max()) ;
+  auto glo_rank = columns_glossary_.id_opt(column).value_or(unknown_rank) ;
+  if (glo_rank==unknown_rank)
+   { std::cout<<"WARNING: unknown column for regex: "<<column<<std::endl ; }
+  auto it = std::find_if(chunk_columns_.cbegin(),chunk_columns_.cend(),[&]( auto const & c )
+   { return ( columns_glossary_.id_opt(c).value_or(unknown_rank) == glo_rank ) ; }) ;
+  if (it==chunk_columns_.cend())
+   { std::cout<<"WARNING: lacking column for regex: "<<column<<std::endl ; }
+  auto i = std::distance(chunk_columns_.cbegin(),it) ;
+  chunk_regex_[i] = std::regex(regex) ;
  }
 
 bool ChunksFile::read_next_line()
@@ -188,7 +202,12 @@ bool ChunksFile::read_next_line()
     icells_.assign(max,"") ;
     decltype(max) i = 0 ;
     while ((i<max)&&(file_>>cell))
-     { icells_[i++] = std::move(cell) ; }
+     {
+      icells_[i] = std::move(cell) ;
+      if (!std::regex_match(icells_[i],chunk_regex_[i]))
+       { throw std::runtime_error(std::format("INVALID VALUE: {}, line {}, column {}: {}",file_.name(),file_.line_number(),chunk_columns_[i],icells_[i])) ; }
+      i++ ;
+     }
    }
   is_eol_ = false ;
   current_indice_ = 0 ;

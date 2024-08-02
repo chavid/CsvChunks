@@ -14,6 +14,7 @@
 #include <utility>
 #include <iomanip>
 #include <cassert>
+#include <regex>
 
 class ChunksFile
  {
@@ -32,6 +33,7 @@ class ChunksFile
     FrequentString chunk_version() { return chunk_version_ ; }
     const std::vector<std::string> & chunk_columns() { return chunk_columns_ ; }
     void read_columns_order( std::string_view ) ; // MUST be called after seek_next_chunk()
+    void read_column_regex( std::string_view column, const std::string & regex ) ;
     bool read_next_line() ;
     std::size_t line_number() { return file_.line_number() ; }
     template <typename T>
@@ -65,7 +67,10 @@ class ChunksFile
     bool is_eoc_ ; // end of chunk
 
     // read
+    using Columns = Glossary<struct ColumnsFoo> ;
+    Columns columns_glossary_ ;
     std::vector<std::string> chunk_columns_ ;
+    std::vector<std::regex> chunk_regex_ ;
     std::vector<std::string> icells_ ;
     std::vector<std::vector<std::string>::size_type> iorder_ ;
     std::vector<std::size_t>::size_type current_indice_ = 0 ;

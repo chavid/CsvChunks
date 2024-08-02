@@ -35,6 +35,7 @@ void read_chunks
       if (chunk.flavor=="mppc"_fs)
        {
         finput.read_columns_order("comm;name|nom;id|numero|anonymat|scei;adm-x;lo;lf;ads") ;
+        finput.read_column_regex("id",R"(\d{4})") ;
         chunk.columns.assign({ "comm", "nom", "id", "adm-x", "lo", "lf", "ads" }) ;
        }
       else if (chunk.flavor=="ens"_fs)
@@ -168,8 +169,15 @@ void diff_content
    { diff_line(message,content1[iline],content2[iline]) ; } 
  }
 
-int main()
+int main( int argc, char const * * argv )
  {
+  // verification des arguments de la ligne de commande
+  if (argc<2)
+   { throw std::runtime_error("Which file do you want to open?") ; }
+  if (argc>2)
+   { throw std::runtime_error("Too much arguments on the command line!") ; }
+  std::string input_file_name(argv[1]) ;
+
   StaticStrings::init() ;
   ChunksFile cf(true) ;
 
@@ -177,7 +185,7 @@ int main()
   std::vector<Chunk> chunks1, chunks2 ;
   try
    {
-    read_chunks("chunks_file.in.csv",chunks1,cf) ;
+    read_chunks(input_file_name,chunks1,cf) ;
     write_chunks("chunks_file.out.csv",chunks1,cf) ;
     read_chunks("chunks_file.out.csv",chunks2,cf) ;
 

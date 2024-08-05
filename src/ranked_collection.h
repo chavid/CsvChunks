@@ -1,11 +1,14 @@
 
+
 #ifndef RANKED_H
 #define RANKED_H
+
 
 #include "strong_int.h"
 #include <vector>
 #include <utility>
 #include <exception>
+
 
 // T is meant to inherit from RankedItem<T>, and should be
 // built with RankedCollection<T>::make. This way, any
@@ -61,5 +64,22 @@ class RankedItem
     Rank rank_ {0} ;
  } ;
 
+// Below is a concept to check that a type is a RankedItem,
+// and a specialization of std::less for pointers to RankedItem,
+// so that when using pointers to RankedItem in a std::set or
+// std::map, they are sorted by rank.
+
+template<typename T>
+concept IsRankedItem = std::is_base_of_v<RankedItem<T>, T>;
+
+template <IsRankedItem T>
+struct std::less<T const *>
+ {
+  bool operator()( T const * i1, T const * i2 ) const
+   { return i1->rank()<i2->rank() ; }
+ } ;
+
+
 #endif
+
 

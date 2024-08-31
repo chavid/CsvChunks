@@ -178,7 +178,7 @@ int main( int argc, char const * * argv )
    { throw std::runtime_error("Too much arguments on the command line!") ; }
   std::string input_file_name(argv[1]) ;
 
-  StaticStrings::init() ;
+  //StaticStrings::init() ;
   ChunksFile cf(true) ;
 
   // reading csv chunks
@@ -211,7 +211,7 @@ int main( int argc, char const * * argv )
    {
     std::cout<<e.what()<<std::endl ;
    }
-  std::cout<<"static strings size: "<<StaticStrings::size()<<std::endl ;
+  //std::cout<<"static strings size: "<<StaticStrings::size()<<std::endl ;
   std::cout<<"final line: "<<cf.line_number()<<std::endl ;
   return 0 ;
  }

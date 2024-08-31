@@ -3,5 +3,4 @@ mpc1 NOM1(Sophie) 4009 oui AN  PH
 mpc1 NOM2(Samuel) 4405 oui AN CH PH 
 mpc1 NOM3(Lisa) 4504 oui AN  MA 
 INVALID VALUE: chunks_file.invalid.csv, line 7, column ANONYMAT: 54517
-static strings size: 92
 final line: 7

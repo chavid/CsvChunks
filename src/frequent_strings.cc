@@ -10,7 +10,7 @@
 //===================================================
 
 void FrequentString::init()
- { StaticStrings::init() ; }
+ { /*StaticStrings::init()*/ ; }
 
 FrequentString operator"" _fs ( char const * str, std::size_t )
  { return FrequentString(str) ; }

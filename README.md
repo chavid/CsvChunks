@@ -32,3 +32,10 @@ This project is developed with the help of Docker and [this recipe](https://gith
 ## Few design principles
 
 - I use strongly typed integers and arrays, so to ensure that I never combine an index with the wrong array. 
+
+## Release process
+
+Commit everything.
+Call `release.bash v*.*.*` to prepare a tar file.
+Create the release on github, uploading the tar file.
+

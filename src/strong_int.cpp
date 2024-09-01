@@ -2,6 +2,7 @@
 #include "strong_int.h"
 #include <sstream>
 #include <format>
+#include <unordered_set>
 
 #define DISPLAY(EXPR) std::cout<<#EXPR<<" : "<<(EXPR)<<std::endl
 #define BOOL(VAR) std::cout<<#VAR<<" is "<<(VAR?"true":"false")<<std::endl ;
@@ -37,6 +38,13 @@ int main()
   DISPLAY(i2<i3) ;
   DISPLAY(k3<k2) ;
   DISPLAY(k3<=k2) ;
+
+  std::unordered_set<Indice1> i1set ;
+  i1set.insert(i1) ;
+  i1set.insert(i2) ;
+  i1set.insert(i3) ;
+  for ( auto const & i : i1set )
+   { std::cout<<i<<std::endl ; }
 
   return 0 ;
  }

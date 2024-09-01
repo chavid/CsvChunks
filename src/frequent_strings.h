@@ -32,7 +32,7 @@ class FrequentString
     std::size_t size() const { return StaticStrings::str(rank_).size() ; }
 
     // fast comparison
-    //StrongIntInternalType value() const { return rank_ ; }
+    auto rank() const { return rank_ ; }
     bool operator==( FrequentString const & other ) const { return rank_==other.rank_ ; }
     std::strong_ordering operator<=>( FrequentString const & other ) const { return rank_<=>other.rank_ ; }
 
@@ -52,9 +52,17 @@ std::istream & operator>>( std::istream & is, FrequentString & ) ;
 template<>
 struct std::formatter<FrequentString> : std::formatter<std::string_view>
  {
-    template<class FormatContext>
-    auto format( FrequentString fs, FormatContext & fc ) const
-     { return std::formatter<std::string_view>::format(fs.str(), fc) ; }
+  template<class FormatContext>
+  auto format( FrequentString fs, FormatContext & fc ) const
+   { return std::formatter<std::string_view>::format(fs.str(), fc) ; }
+ } ;
+
+// so to make it usable in a std::unordered_set or std::unordered_map
+template<>
+struct std::hash<FrequentString>
+ {
+  auto operator()(const FrequentString & fs) const noexcept
+   { return fs.rank().value() ; }
  } ;
 
 #endif

@@ -94,10 +94,12 @@ struct std::formatter<StrongInt<InternalType,TagType>> : std::formatter<Internal
 //bool operator>=( const StrongInt<InternalType,TagType> & i1, const StrongInt<InternalType,TagType> & i2 )
 // { return (i1.value()>=i2.value()) ; }
 
-
-//===================================================
-// So to transform any index-like integer into
-// a standalone type,
-//===================================================
+// so to make it usable in a std::unordered_set or std::unordered_map
+template <strong_int_internal InternalType, typename TagType>
+struct std::hash<StrongInt<InternalType,TagType>>
+ {
+  auto operator()(const StrongInt<InternalType,TagType> & si) const noexcept
+   { return si.value() ; }
+ } ;
 
 #endif

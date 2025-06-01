@@ -21,7 +21,7 @@ When using `ChunksFile::read_columns_order`:
 
 ## Testing
 
-This project is developed with the help of Docker and [this recipe](https://github.com/chavid/MyDevTools/blob/main/DevCpp20/Dockerfile). Running the provided tests rely on the [oval script](https://github.com/chavid/MyDevTools/blob/main/bin/oval.py) .
+This project is developed with the help of Docker and [this recipe](https://github.com/chavid/DevScripts/blob/main/DevCpp20/Dockerfile). Running the provided tests rely on the [oval script](https://github.com/chavid/DevScripts/blob/main/bin/oval.py) .
 
 ## Naming rules
 
